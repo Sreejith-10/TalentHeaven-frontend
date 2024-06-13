@@ -12,16 +12,21 @@ import {
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/use-toast";
-import {AuthServiceInstance} from "@/lib/axios";
+import {loginUser} from "@/controllers/userAuthController";
 import {loginSchema} from "@/schemas/login-schema";
+import {authStore} from "@/store/auth-store";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useMutation} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 
 export default function Login() {
 	const {toast} = useToast();
+	const {push} = useRouter();
+	const updateAuth = authStore((state) => state.updateAuth);
 
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
@@ -31,27 +36,31 @@ export default function Login() {
 		},
 	});
 
-	const handleSubmit = (values: z.infer<typeof loginSchema>) => {
-		try {
-			AuthServiceInstance.post("/login", values, {
-				headers: {"Content-Type": "application/json"},
-			}).then((res) => {
-				toast({title: "Succes", description: res.data.message});
-				localStorage.setItem("access_token", JSON.stringify(res.data.token));
-				localStorage.setItem("session_id", JSON.stringify(res.data.session_id));
-			});
-		} catch (error) {
+	const {mutate, data, isPending} = useMutation({
+		mutationFn: loginUser,
+		onSuccess: (res) => {
+			push("/");
+			updateAuth(true);
+			toast({title: "Succes", description: res.data.message, duration: 3000});
+			localStorage.setItem("session_id", JSON.stringify(res.data.session_id));
+		},
+		onError: (error) => {
 			const err = error as AxiosError<{message: string; err: any}>;
 			toast({
 				variant: "destructive",
 				title: "Error",
 				description: err.response?.data.message,
+				duration: 3000,
 			});
-		}
+		},
+	});
+
+	const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
+		mutate(values);
 	};
 
 	return (
-		<div className="w-[400px] h-auto py-12 px-9 flex flex-col gap-10 shadow-xl rounded-2xl dark:border dark:border-input">
+		<div className="w-[400px] h-auto py-12 px-9 flex flex-col gap-10 shadow-xl rounded-2xl border border-slate-200 border-opacity-30 dark:border dark:border-input">
 			<div>
 				<h1 className="font-bold text-[1.5rem]">Welcome back</h1>
 				<p className="font-medium text-slate-600">Login to you account</p>
@@ -94,19 +103,19 @@ export default function Login() {
 					/>
 					<div className="w-full pb-3">
 						<Link
-							className="hover:text-emerald-600 ease-in-out duration-700"
+							className="hover:text-purple-600 ease-in-out duration-700"
 							href={"/register"}>
 							create account?
 						</Link>
 						<Link
-							className="float-right hover:text-emerald-600 ease-in-out duration-700"
+							className="float-right hover:text-purple-600 ease-in-out duration-700"
 							href={"/reset-password"}>
 							forgot password ?
 						</Link>
 					</div>
 					<Button
 						type="submit"
-						className=" dark:bg-transparent dark:text-white dark:border dark:border-input">
+						className="bg-purple-600 hover:bg-purple-400 dark:bg-transparent dark:hover:bg-purple-600 dark:text-white dark:border dark:border-input">
 						Login
 					</Button>
 				</form>

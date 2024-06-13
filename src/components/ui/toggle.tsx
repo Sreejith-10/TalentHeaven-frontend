@@ -3,12 +3,20 @@
 import {Moon, Sun} from "lucide-react";
 import {useTheme} from "next-themes";
 
-export function Toggle() {
-	const {theme,setTheme} = useTheme();
+export function Toggle({size}: {size?: number}) {
+	const {theme, setTheme} = useTheme();
 
 	return theme === "dark" ? (
-		<Sun onClick={() => setTheme("light")} />
+		<Sun
+			size={size}
+			onClick={() => setTheme("light")}
+			className="cursor-pointer"
+		/>
 	) : (
-		<Moon onClick={() => setTheme("dark")} />
+		<Moon
+			size={size}
+			onClick={() => setTheme("dark")}
+			className="cursor-pointer"
+		/>
 	);
 }
