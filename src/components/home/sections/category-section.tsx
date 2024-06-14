@@ -43,7 +43,7 @@ const CategorySection = () => {
 										alt="card-icon"
 										width={40}
 										height={30}
-										className="dark:brightness-0 dark:invert-0"
+										className="w-auto dark:brightness-0 dark:invert-0"
 									/>
 								</div>
 							</motion.div>
