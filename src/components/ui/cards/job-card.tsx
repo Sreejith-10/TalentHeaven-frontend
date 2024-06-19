@@ -12,7 +12,7 @@ const JobCard = ({index}: {index: number}) => {
 			whileInView={{opacity: 1, translateY: 0}}
 			transition={{ease: "easeInOut", delay: index * 0.4}}
 			viewport={{once: true}}
-			className="w-[400px] h-fit rounded-[28px] shadow-xl py-4 px-8 space-y-5 border border-slate-300 dark:shadow-lg dark:shadow-slate-900 border-opacity-35">
+			className="w-[400px] md:w-full h-fit rounded-[28px] shadow-xl py-4 px-8 space-y-5 border border-slate-300 dark:shadow-lg dark:shadow-slate-900 border-opacity-35">
 			<div className="w-full flex gap-5 justify-items-start justify-between">
 				<div className="flex items-center gap-5">
 					<div>

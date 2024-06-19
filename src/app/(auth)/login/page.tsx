@@ -18,8 +18,10 @@ import {authStore} from "@/store/auth-store";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useMutation} from "@tanstack/react-query";
 import {AxiosError} from "axios";
+import {Eye, EyeOffIcon} from "lucide-react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 
@@ -27,6 +29,7 @@ export default function Login() {
 	const {toast} = useToast();
 	const {push} = useRouter();
 	const updateAuth = authStore((state) => state.updateAuth);
+	const [show, setShow] = useState(false);
 
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
@@ -95,7 +98,24 @@ export default function Login() {
 							<FormItem>
 								<FormLabel className="font-bold">Password</FormLabel>
 								<FormControl>
-									<Input {...field} />
+									<div className="w-full h-auto relative">
+										<Input {...field} type={show ? "text" : "password"} />
+										<div className="absolute top-1/2 translate-y-[-50%] right-3">
+											{show ? (
+												<Eye
+													onClick={() => setShow(false)}
+													size={22}
+													className="cursor-pointer"
+												/>
+											) : (
+												<EyeOffIcon
+													onClick={() => setShow(true)}
+													size={22}
+													className="cursor-pointer"
+												/>
+											)}
+										</div>
+									</div>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -109,7 +129,7 @@ export default function Login() {
 						</Link>
 						<Link
 							className="float-right hover:text-purple-600 ease-in-out duration-700"
-							href={"/reset-password"}>
+							href={"/forgot-password"}>
 							forgot password ?
 						</Link>
 					</div>

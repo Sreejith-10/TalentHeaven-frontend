@@ -19,8 +19,8 @@ const HeroSeachBar = () => {
 	return (
 		<form
 			onSubmit={searchhandler}
-			className="w-fit h-[60px] flex items-center gap-5 px-4 rounded-full box-shadow dark:dark-box-shadow">
-			<div className="flex gap-5 items-center justify-center">
+			className="w-fit h-[60px] flex items-center gap-5 px-4 sm:gap-3 rounded-full box-shadow dark:dark-box-shadow">
+			<div className="flex gap-5 items-center justify-center sm:gap-0">
 				<Search />
 				<input
 					name="job-title"
@@ -29,8 +29,8 @@ const HeroSeachBar = () => {
 					placeholder="Job title or keyword"
 				/>
 			</div>
-			<span className="inline-block w-[2px] h-[30px] bg-slate-300" />
-			<div className="flex gap-5">
+			<span className="inline-block w-[2px] h-[30px] bg-slate-300 sm:hidden" />
+			<div className="flex gap-5 sm:hidden">
 				<MapPinnedIcon />
 				<input
 					name="job-location"

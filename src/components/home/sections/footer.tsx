@@ -8,7 +8,7 @@ const Footer = () => {
 		<div className="w-full bg-slate-100 dark:bg-slate-900">
 			<SectionWrapper>
 				<footer className="w-full flex flex-col gap-[60px] items-center justify-center py-10 ">
-					<div className="w-full flex items-center justify-end gap-10">
+					<div className="w-full flex items-center justify-end gap-10 sm:flex-col sm:items-start sm:gap-4">
 						<div>
 							<MailboxIcon size={30} />
 						</div>
@@ -28,7 +28,7 @@ const Footer = () => {
 						</Button>
 					</div>
 					<div className="w-full h-[2px] bg-slate-300 dark:bg-slate-800" />
-					<div className="w-full flex justify-center">
+					<div className="w-full flex justify-center md:flex-col md:gap-10">
 						<div className="flex flex-col gap-5">
 							<div className="flex items-center gap-5">
 								<Zap />
@@ -40,7 +40,7 @@ const Footer = () => {
 								earum itaque sint?
 							</p>
 						</div>
-						<div className="w-full flex gap-10 justify-evenly">
+						<div className="w-full flex gap-10 justify-evenly sm:flex-wrap sm:items-start sm:justify-start">
 							<ul>
 								<li className="font-bold cursor-pointer mb-2">Pages</li>
 								<li className="font-semibold text-slate-700 dark:text-slate-400 cursor-pointer mb-1">
@@ -123,7 +123,7 @@ const Footer = () => {
 					</div>
 					<div className="w-full h-[2px] bg-slate-300 dark:bg-slate-800" />
 
-					<div className="w-full flex justify-between items-center">
+					<div className="w-full flex justify-between items-center sm:flex-col sm:gap-5">
 						<div className="flex items-center gap-2">
 							<Copyright /> 2024{" "}
 							<span className="font-semibold">TalentHeaven</span>, All rights

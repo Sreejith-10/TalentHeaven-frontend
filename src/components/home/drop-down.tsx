@@ -13,6 +13,7 @@ import {useMutation} from "@tanstack/react-query";
 import {logOutUser} from "@/controllers/userAuthController";
 import Cookie from "js-cookie";
 import {authStore} from "@/store/auth-store";
+import Link from "next/link";
 
 const DropDown = () => {
 	const {toast} = useToast();
@@ -54,7 +55,9 @@ const DropDown = () => {
 				/>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="mt-2 cursor-pointer">
-				<DropdownMenuLabel>My account</DropdownMenuLabel>
+				<DropdownMenuLabel>
+					<Link href={"/account"}>My account</Link>
+				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuLabel>Notifications</DropdownMenuLabel>
 				<DropdownMenuLabel>Messages</DropdownMenuLabel>

@@ -1,6 +1,9 @@
+"use client";
+
 import SectionWrapper from "@/components/wrapper/section-wrapper";
 import {Bookmark, SearchIcon} from "lucide-react";
 import Image from "next/image";
+import {motion} from "framer-motion";
 
 export default function RegisterSection() {
 	return (
@@ -8,13 +11,18 @@ export default function RegisterSection() {
 			<SectionWrapper>
 				<div className="w-full flex flex-col gap-[70px] items-center justify-center">
 					<div className="text-center">
-						<h1 className="text-[50px] font-semibold  text-slate-800 dark:text-slate-300">
+						<h1 className="text-[50px] sm:text-[30px] font-semibold  text-slate-800 dark:text-slate-300">
 							Easy to Use, Easy to Apply
 						</h1>
 						<p className="text-slate-500 dark:text-slate-700">How it works</p>
 					</div>
-					<div className="flex gap-10">
-						<div className="w-[300px] h-[350px] bg-cyan-200 px-5 flex flex-col rounded-[32px] shadow-md">
+					<div className="flex gap-10 md:grid md:gap-16">
+						<motion.div
+							initial={{opacity: 0}}
+							whileInView={{opacity: 1}}
+							transition={{ease: "easeInOut", delay: 0.5}}
+							viewport={{once: true}}
+							className="w-[300px] h-[350px] md:w-[400px] md:h-[450px] xs:w-[350px] bg-cyan-200 px-5 flex flex-col rounded-[32px] shadow-md">
 							<div className="py-5 space-y-2">
 								<h1 className="font-semibold text-xl dark:text-slate-600">
 									Sign Up for TalentHeaven
@@ -40,9 +48,14 @@ export default function RegisterSection() {
 									Login
 								</div>
 							</div>
-						</div>
+						</motion.div>
 
-						<div className="w-[300px] h-[350px] bg-pink-200 px-5 flex flex-col rounded-[32px] shadow-md">
+						<motion.div
+							initial={{opacity: 0}}
+							whileInView={{opacity: 1}}
+							transition={{ease: "easeInOut", delay: 0.9}}
+							viewport={{once: true}}
+							className="w-[300px] h-[350px] md:w-[400px] md:h-[450px] xs:w-[350px] bg-pink-200 px-5 flex flex-col rounded-[32px] shadow-md">
 							<div className="py-5 space-y-2">
 								<h1 className="font-semibold text-xl dark:text-slate-700">
 									Find a job to liking
@@ -100,9 +113,14 @@ export default function RegisterSection() {
 									<Bookmark size={20} className="" />
 								</div>
 							</div>
-						</div>
+						</motion.div>
 
-						<div className="w-[300px] h-[350px] bg-rose-200 px-5 flex flex-col rounded-[32px] shadow-md">
+						<motion.div
+							initial={{opacity: 0}}
+							whileInView={{opacity: 1}}
+							transition={{ease: "easeInOut", delay: 1.3}}
+							viewport={{once: true}}
+							className="w-[300px] h-[350px] md:w-[400px] md:h-[450px] xs:w-[350px] bg-rose-200 px-5 flex flex-col rounded-[32px] shadow-md">
 							<div className="py-5 space-y-2">
 								<h1 className="font-semibold text-xl dark:text-slate-700">
 									Apply to job your choice
@@ -124,7 +142,7 @@ export default function RegisterSection() {
 									Apply now
 								</div>
 							</div>
-						</div>
+						</motion.div>
 					</div>
 					<br />
 					<br />

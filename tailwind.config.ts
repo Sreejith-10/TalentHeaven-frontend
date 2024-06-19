@@ -13,11 +13,16 @@ const config = {
 		container: {
 			center: true,
 			padding: "2rem",
-			screens: {
-				"2xl": "1400px",
-			},
 		},
 		extend: {
+			screens: {
+				xls: {max: "1536px"},
+				xl: {max: "1280px"},
+				lg: {max: "1024px"},
+				md: {max: "768px"},
+				sm: {max: "640px"},
+				xs: {max: "460px"},
+			},
 			colors: {
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
@@ -79,7 +84,7 @@ const config = {
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
-        "move":"move .4s ease-in-out"
+				move: "move .4s ease-in-out",
 			},
 		},
 	},

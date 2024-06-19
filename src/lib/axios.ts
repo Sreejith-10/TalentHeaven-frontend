@@ -13,9 +13,15 @@ const RecruiterAuthInstance = axios.create({
 })
 
 const UserInstance = axios.create({
-    baseURL:"http://loaclhost:3003/user",
+    baseURL:"http://localhost:3003/user",
     timeout:5000,
     withCredentials:true
 })
 
-export {AuthServiceInstance,RecruiterAuthInstance,UserInstance}
+const JobInstance = axios.create({
+    baseURL:"http://localhost:3004/job",
+    timeout:5000,
+    withCredentials:true,
+})
+
+export {AuthServiceInstance,RecruiterAuthInstance,UserInstance,JobInstance}

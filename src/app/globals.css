@@ -105,9 +105,7 @@
 	.bb {
 		border-radius: 75% 47% 42% 83% / 57% 45% 19% 47%;
 	}
-	.hide-scroll-bar {
-		::-webkit-scrollbar {
-			display: none;
-		}
+	.hide-scroll-bar::-webkit-scrollbar {
+		display: none;
 	}
 }

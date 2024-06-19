@@ -25,14 +25,13 @@ type UserInputType = {
 		phone?: string | undefined;
 		email?: string | undefined;
 		skills?: string[] | undefined;
-		education?:
-			| {
+		education?:{
 					institute: string;
 					education_type: string;
 					stream: string;
 					start_date: string;
 					end_date: string;
-			  }[]
+			}[]
 			| undefined;
 	};
 	user_id: string;
@@ -42,3 +41,16 @@ export const createUser = async (userInputs: UserInputType) => {
 	const data = await UserInstance.post("/create-user", {userInputs});
 	return data;
 };
+
+export const fetchUser = async (user_id:string) =>{
+	const data = await UserInstance.get(`/get-user/${user_id}`)
+	return data
+}
+
+export const sendMail = async(mail:string)=>{
+	// await AuthServiceInstance.post("/forgot-password",{mail},{headers:{
+	// 	"Content-Type":"application/json"
+	// }})
+	// throw new Error("prvode a valid email")
+	return true
+}

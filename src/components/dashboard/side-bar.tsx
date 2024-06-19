@@ -1,4 +1,5 @@
 import {
+	Building,
 	FileIcon,
 	LayoutDashboard,
 	Mail,
@@ -7,7 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export default function SideBar() {
+const SideBar = () => {
 	return (
 		<div className="w-full h-full">
 			<div className="py-5 flex flex-col items-center justify-center">
@@ -16,28 +17,44 @@ export default function SideBar() {
 				<div className="space-y-10">
 					<div className="flex items-center gap-5">
 						<LayoutDashboard size={30} />
-						<Link href={""} className="font-semibold">
+						<Link href={"/dashboard"} className="font-semibold">
 							Dashboard
 						</Link>
 					</div>
 					<div className="flex items-center gap-5">
 						<FileIcon />
-						<Link href={""} className="font-semibold">Applications</Link>
+						<Link href={"/dashboard/applications"} className="font-semibold">
+							Applications
+						</Link>
 					</div>
 					<div className="flex items-center gap-5">
 						<TargetIcon />
-						<Link href={""} className="font-semibold">Jobs</Link>
+						<Link href={"/dashboard/jobs"} className="font-semibold">
+							Jobs
+						</Link>
+					</div>
+					<div className="flex items-center gap-5">
+						<Building />
+						<Link href={"/dashboard/company"} className="font-semibold">
+							Company
+						</Link>
 					</div>
 					<div className="flex items-center gap-5">
 						<Mail />
-						<Link href={""} className="font-semibold">Messages</Link>
+						<Link href={"/dashboard/messages"} className="font-semibold">
+							Messages
+						</Link>
 					</div>
 					<div className="flex items-center gap-5">
 						<Settings />
-						<Link href={""} className="font-semibold">Settings</Link>
+						<Link href={""} className="font-semibold">
+							Settings
+						</Link>
 					</div>
 				</div>
 			</div>
 		</div>
 	);
-}
+};
+
+export default SideBar;

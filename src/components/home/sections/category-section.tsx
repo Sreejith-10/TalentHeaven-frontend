@@ -7,18 +7,18 @@ import {motion} from "framer-motion";
 
 const CategorySection = () => {
 	return (
-		<section className="h-screen bg-purple-100 dark:bg-slate-900/30 flex justify-center">
+		<section className="h-screen xs:h-auto xs:pb-20 bg-purple-100 dark:bg-slate-900/30 flex justify-center">
 			<SectionWrapper>
 				<div className="mt-[100px] space-y-12">
 					<div className="text-center">
-						<h1 className="text-[50px] font-semibold  text-slate-800 dark:text-slate-300">
+						<h1 className="text-[50px] sm:text-[30px] font-semibold  text-slate-800 dark:text-slate-300">
 							Popular Categories
 						</h1>
 						<p className="text-slate-500 dark:text-slate-700">
 							Search your career oppertunity with selected catgories
 						</p>
 					</div>
-					<div className="grid grid-cols-3 gap-[60px]">
+					<div className="grid grid-cols-3 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 xs:place-content-center xs:justify-items-center gap-[60px]">
 						{categories.map((item, index) => (
 							<motion.div
 								initial={{translateX: 100, opacity: 0}}

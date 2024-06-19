@@ -43,7 +43,7 @@ export default function Main() {
 						</Link>
 					</div>
 					<div className="flex gap-5">
-						<div className="w-1/2 bg-slate-50 rounded-2xl flex items-center justify-between p-5">
+						<div className="w-1/2 bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 rounded-2xl flex items-center justify-between p-5">
 							<div className="flex items-center gap-5">
 								<span className="text-[40px]">1</span>
 								<div>
@@ -53,7 +53,7 @@ export default function Main() {
 							</div>
 							<div className="font-bold text-center">40%</div>
 						</div>
-						<div className="w-1/2 bg-slate-50 rounded-2xl flex items-center justify-between p-5">
+						<div className="w-1/2 bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 rounded-2xl flex items-center justify-between p-5">
 							<div className="flex items-center gap-5">
 								<span className="text-[40px]">1</span>
 								<div>
@@ -69,7 +69,7 @@ export default function Main() {
 			<div className="w-[30%] h-full flex flex-col gap-5">
 				<div className="w-full h-[40%]">
 					<Calendar
-						className="bg-slate-50 w-full h-full rounded-2xl shadow-sm cursor-pointer"
+						className="bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 w-full h-full rounded-2xl shadow-sm cursor-pointer"
 						classNames={{
 							months:
 								"flex w-full flex-col sm:flex-col space-y- 4 sm:space-x-4 sm:space-y-0 flex-1 font-bold",
@@ -80,14 +80,14 @@ export default function Main() {
 						}}
 					/>
 				</div>
-				<div className="w-full h-[55%] bg-slate-50 shadow-sm rounded-2xl flex flex-col overflow-auto hide-scroll-bar">
-					<div className="flex justify-between sticky top-0 bg-slate-100 p-5">
+				<div className="w-full h-[55%] bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 shadow-sm rounded-2xl flex flex-col overflow-auto hide-scroll-bar">
+					<div className="flex justify-between sticky top-0 dark:bg-slate-900 dark:border dark:border-slate-800 bg-slate-100 p-5">
 						<h1 className="font-semibold text-xl">New Applications</h1>
 						<Link href={""} className="hover:underline text-slate-700">
 							see all
 						</Link>
 					</div>
-					<div className="h-full flex flex-col gap-3 p-5">
+					<div className="h-full flex flex-col p-4 gap-5">
 						{Array(10)
 							.fill("")
 							.map((_, index) => (

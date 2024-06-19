@@ -23,11 +23,13 @@ import {useRouter} from "next/navigation";
 import {useMutation} from "@tanstack/react-query";
 import {createUser} from "@/controllers/userAuthController";
 import {AxiosError} from "axios";
+import {X} from "lucide-react";
 
 export default function MultiStepForm() {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const {toast} = useToast();
 	const {push} = useRouter();
+	const [skills, setSkills] = useState<string[] | []>([]);
 
 	const {mutate, isPending} = useMutation({
 		mutationFn: createUser,
@@ -68,6 +70,7 @@ export default function MultiStepForm() {
 					stream: "",
 					start_date: "",
 					end_date: "",
+					marks: "",
 				},
 			],
 		},
@@ -98,7 +101,25 @@ export default function MultiStepForm() {
 		//@ts-expect-error type jwt data
 		const id = decoded.id;
 
-		createUser({values, user_id: id});
+		mutate({values, user_id: id});
+	};
+
+	const stepOneClickHandler = async () => {
+		const fname = form.getValues("fname");
+		const email = form.getValues("email");
+		if (fname === "") {
+			return form.setError("fname", {message: "Provide a name"});
+		}
+
+		if (email && email?.length > 0) {
+			const valid = await form.trigger("email");
+
+			if (valid) {
+				setCurrentIndex(1);
+			} else {
+				return;
+			}
+		}
 	};
 
 	return (
@@ -118,7 +139,7 @@ export default function MultiStepForm() {
 									<FormItem>
 										<FormLabel className="font-bold">Fisrt name</FormLabel>
 										<FormControl>
-											<Input {...field} />
+											<Input {...field} required />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -166,9 +187,7 @@ export default function MultiStepForm() {
 							<br />
 							<div className="w-full flex justify-end">
 								<Button
-									onClick={() => {
-										setCurrentIndex((prev) => prev + 1);
-									}}
+									onClick={stepOneClickHandler}
 									className="bg-blue-500 hover:bg-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400">
 									Next
 								</Button>
@@ -180,7 +199,45 @@ export default function MultiStepForm() {
 						<div>
 							<h1 className="font-semibold text-[25px]">Skills</h1>
 							<p>Provide your skills if any</p>
-							<input type="text" />
+							<br />
+							<Input
+								type="text"
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										e.preventDefault();
+										const skill = e.currentTarget.value;
+										setSkills((prev) => [...prev, skill]);
+										e.currentTarget.value = "";
+									}
+								}}
+							/>
+							<br />
+
+							<div className="w-full h-auto flex flex-wrap gap-5">
+								{skills?.map((item, index) => (
+									<span
+										className="bg-slate-200 w-fit px-3 py-3 rounded-md flex justify-between gap-5"
+										key={index}>
+										<p className="font-semibold text-sm text-slate-700">
+											{item}
+										</p>
+										<X
+											size={20}
+											className="hover:cursor-pointer"
+											onClick={() => {
+												setSkills((prev) =>
+													prev.filter((iem, ind) => {
+														if (ind !== index) {
+															return item;
+														}
+													})
+												);
+											}}
+										/>
+									</span>
+								))}
+							</div>
+							<br />
 
 							<div className="w-full flex justify-between">
 								<Button
@@ -189,7 +246,12 @@ export default function MultiStepForm() {
 									Prev
 								</Button>
 								<Button
-									onClick={() => setCurrentIndex((prev) => prev + 1)}
+									onClick={() => {
+										{
+											form.setValue("skills", skills);
+											setCurrentIndex((prev) => prev + 1);
+										}
+									}}
 									className="bg-blue-500 hover:bg-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400">
 									Next
 								</Button>
@@ -229,6 +291,19 @@ export default function MultiStepForm() {
 											/>
 										</div>
 
+										<div>
+											<Label className="font-bold">
+												Marks{" "}
+												<span className="font-medium text-slate-600">
+													(in percentage %)
+												</span>
+											</Label>
+											<Input
+												type="text"
+												{...form.register(`education.${index}.marks`)}
+											/>
+										</div>
+
 										<div className="flex w-full justify-between gap-5">
 											<div className="w-1/2">
 												<Label className="font-bold">Start Date</Label>
@@ -265,6 +340,7 @@ export default function MultiStepForm() {
 														institute: "",
 														education_type: "",
 														stream: "",
+														marks: "",
 														start_date: "",
 														end_date: "",
 													});

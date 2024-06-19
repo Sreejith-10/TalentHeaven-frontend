@@ -10,13 +10,13 @@ export function Toggle({size}: {size?: number}) {
 		<Sun
 			size={size}
 			onClick={() => setTheme("light")}
-			className="cursor-pointer"
+			className="cursor-pointer sm:size-8"
 		/>
 	) : (
 		<Moon
 			size={size}
 			onClick={() => setTheme("dark")}
-			className="cursor-pointer"
+			className="cursor-pointer sm:size-8"
 		/>
 	);
 }
