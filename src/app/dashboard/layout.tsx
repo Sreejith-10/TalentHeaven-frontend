@@ -1,4 +1,5 @@
 import SideBar from "@/components/dashboard/side-bar";
+import {ProtectedRoute} from "@/providers/dashboard-provider";
 import {Metadata} from "next";
 import React from "react";
 
@@ -13,11 +14,13 @@ export default function RecruiterLayout({
 	main: React.ReactNode;
 }>) {
 	return (
-		<div className="w-ful h-dvh flex">
-			<div className="w-[20%]">
-				<SideBar />
+		<ProtectedRoute>
+			<div className="w-ful h-dvh flex">
+				<div className="w-[20%]">
+					<SideBar />
+				</div>
+				<div className="w-[80%] h-full">{main}</div>
 			</div>
-			<div className="w-[80%] h-full">{main}</div>
-		</div>
+		</ProtectedRoute>
 	);
 }

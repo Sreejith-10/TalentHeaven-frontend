@@ -10,7 +10,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {Label} from "@/components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -19,14 +19,18 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {createJob} from "@/controllers/jobController";
 import {jobScehma} from "@/schemas/job-scehma";
+import {useRecruiterStore} from "@/store/useRecruiterStore";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useMutation} from "@tanstack/react-query";
 import {X} from "lucide-react";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 
 export default function CreateJob() {
+	const id = useRecruiterStore((state) => state.companyId);
 	const [skills, setSkills] = useState<string[] | []>([]);
 	const [requirements, setRequirements] = useState<string[] | []>([]);
 
@@ -34,20 +38,34 @@ export default function CreateJob() {
 		resolver: zodResolver(jobScehma),
 		defaultValues: {
 			role: "",
+			vaccany: "1",
 			job_description: "",
 			job_mode: "work form office",
-			job_reqruiements: [],
+			job_requirements: [""],
 			job_type: "full-time",
-			min_salary: "",
-			max_salary: "",
-			min_experience: "",
-			max_experience: "",
+			experience: "fresher",
+			salary: "",
 			skill_rquired: [],
+			applications_end_date: "",
+		},
+	});
+
+	const {mutate} = useMutation({
+		mutationFn: createJob,
+		onSuccess: (res) => {
+			console.log(res);
+		},
+		onError: (err) => {
+			console.log(err);
 		},
 	});
 
 	const submitHandler = (values: z.infer<typeof jobScehma>) => {
 		console.log(values);
+		mutate({values, id});
+		form.reset();
+		setSkills([]);
+		setRequirements([]);
 	};
 
 	return (
@@ -55,9 +73,9 @@ export default function CreateJob() {
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(submitHandler)}
-					className="w-full grid grid-cols-2 gap-10">
+					className="w-full grid grid-cols-2 gap-10 overflow-auto px-4">
+					{/* role */}
 					<div className="space-y-4">
-						{/* role */}
 						<FormField
 							control={form.control}
 							name="role"
@@ -94,9 +112,9 @@ export default function CreateJob() {
 								onKeyDown={(e) => {
 									if (e.key === "Enter") {
 										e.preventDefault();
-										const req = e.currentTarget.value;
+										const req = e.currentTarget.value.trim();
 										setRequirements((prev) => [...prev, req]);
-										form.setValue("skill_rquired", [...skills, req]);
+										form.setValue("job_requirements", [...requirements, req]);
 										e.currentTarget.value = "";
 									}
 								}}
@@ -131,8 +149,8 @@ export default function CreateJob() {
 						</div>
 					</div>
 
+					{/* job-mode */}
 					<div className="space-y-4">
-						{/* job-mode */}
 						<FormField
 							control={form.control}
 							name="job_mode"
@@ -148,9 +166,8 @@ export default function CreateJob() {
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											<SelectItem value={"work from office"}>
-												Work from office
-											</SelectItem>
+											<SelectItem value={"on site"}>On site</SelectItem>
+											<SelectItem value={"hybrid"}>Hybrid</SelectItem>
 											<SelectItem value={"work from home"}>
 												Work from home
 											</SelectItem>
@@ -234,33 +251,29 @@ export default function CreateJob() {
 						</div>
 					</div>
 
-					{/* salary max and min in lpa */}
+					{/* salary*/}
 					<FormField
 						control={form.control}
-						name="min_salary"
+						name="salary"
 						render={({field}) => (
 							<FormItem>
-								<FormLabel className="font-bold">
-									Minimum Salary(in lpa)
-								</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="max_salary"
-						render={({field}) => (
-							<FormItem>
-								<FormLabel className="font-bold">
-									Maximus Salary(in lpa)
-								</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
+								<FormLabel className="font-bold">Salary</FormLabel>
+								<Select
+									onValueChange={field.onChange}
+									defaultValue="work from office">
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder="select a value" />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										<SelectItem value={"0 - 2 LPA"}>0 - 2 LPA</SelectItem>
+										<SelectItem value={"2 - 5 LPA"}>2 - 5 LPA</SelectItem>
+										<SelectItem value={"5 - 10 LPA"}>5 - 10 LPA</SelectItem>
+										<SelectItem value={"10 - 20 LPA"}>10 - 20 LPA</SelectItem>
+										<SelectItem value={"20+ LPA"}>20+ LPA</SelectItem>
+									</SelectContent>
+								</Select>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -269,12 +282,40 @@ export default function CreateJob() {
 					{/* Experience */}
 					<FormField
 						control={form.control}
-						name="min_experience"
+						name="experience"
 						render={({field}) => (
 							<FormItem>
-								<FormLabel className="font-bold">
-									Minimum Experience(In years)
-								</FormLabel>
+								<FormLabel className="font-bold">Experience Required</FormLabel>
+								<Select
+									onValueChange={field.onChange}
+									defaultValue="work from office">
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder="select a value" />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										<SelectItem value={"any"}>Any Experience</SelectItem>
+										<SelectItem value={"fresher"}>Fresher</SelectItem>
+										<SelectItem value={"0 - 1 Year"}>0 - 1 Year</SelectItem>
+										<SelectItem value={"1 - 3 Years"}>1 - 3 Years</SelectItem>
+										<SelectItem value={"3 - 5 Years"}>3 - 5 Years</SelectItem>
+										<SelectItem value={"5 - 10 Years"}>5 - 10 Years</SelectItem>
+										<SelectItem value={"10+ Years"}>10+ Years</SelectItem>
+									</SelectContent>
+								</Select>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					{/* vaccany */}
+					<FormField
+						control={form.control}
+						name="vaccany"
+						render={({field}) => (
+							<FormItem>
+								<FormLabel className="font-bold">Number of vaccancy</FormLabel>
 								<FormControl>
 									<Input {...field} />
 								</FormControl>
@@ -282,16 +323,18 @@ export default function CreateJob() {
 							</FormItem>
 						)}
 					/>
+
+					{/* Application_end_date */}
 					<FormField
 						control={form.control}
-						name="max_experience"
+						name="applications_end_date"
 						render={({field}) => (
 							<FormItem>
 								<FormLabel className="font-bold">
-									Maximus Experience(In years)
+									Application end date
 								</FormLabel>
 								<FormControl>
-									<Input {...field} />
+									<Input {...field} type="date" />
 								</FormControl>
 								<FormMessage />
 							</FormItem>

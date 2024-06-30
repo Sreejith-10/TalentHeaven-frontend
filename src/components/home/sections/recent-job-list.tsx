@@ -1,5 +1,9 @@
+"use client";
+
+import Link from "next/link";
 import SectionWrapper from "../../wrapper/section-wrapper";
 import JobCard from "@/components/ui/cards/job-card";
+import {motion} from "framer-motion";
 
 const RecentJobList = () => {
 	return (
@@ -18,8 +22,25 @@ const RecentJobList = () => {
 						{Array(6)
 							.fill("")
 							.map((_, index) => (
-								<JobCard index={index} key={index} />
+								<motion.div
+									initial={{opacity: 0, translateY: 100}}
+									whileInView={{opacity: 1, translateY: 0}}
+									transition={{ease: "easeInOut", delay: index * 0.4}}
+									viewport={{once: true}}
+									key={index}>
+									<JobCard key={index} />
+								</motion.div>
 							))}
+					</div>
+					<br />
+					<br />
+					<br />
+					<div className="w-full text-center">
+						<Link
+							className="bg-purple-500 py-2 px-5 rounded-xl text-base text-slate-50 hover:underline"
+							href={"/search"}>
+							See more
+						</Link>
 					</div>
 				</div>
 			</SectionWrapper>

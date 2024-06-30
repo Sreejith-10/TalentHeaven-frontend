@@ -1,56 +1,64 @@
-import {AuthServiceInstance, UserInstance} from "@/lib/axios";
+import {AuthServiceInstance} from "@/lib/axios";
 
 export const loginUser = async (values: {email: string; password: string}) => {
-	const res = await AuthServiceInstance.post("/login", values, {
+	const {data} = await AuthServiceInstance.post("/login", values, {
 		headers: {"Content-Type": "application/json"},
 	});
 
-	return res;
+	return data;
 };
 
 export const refreshToken = async (id: string) => {
-	const data = await AuthServiceInstance.get("/refresh/" + id);
+	const {data} = await AuthServiceInstance.get("/refresh/" + id);
 	return data;
 };
 
 export const logOutUser = async (id: string) => {
-	const data = await AuthServiceInstance.get("/logout/" + id);
+	const {data} = await AuthServiceInstance.get("/logout/" + id);
 	return data;
 };
 
-type UserInputType = {
-	values: {
-		fname?: string | undefined;
-		lname?: string | undefined;
-		phone?: string | undefined;
-		email?: string | undefined;
-		skills?: string[] | undefined;
-		education?:{
-					institute: string;
-					education_type: string;
-					stream: string;
-					start_date: string;
-					end_date: string;
-			}[]
-			| undefined;
-	};
-	user_id: string;
-};
 
-export const createUser = async (userInputs: UserInputType) => {
-	const data = await UserInstance.post("/create-user", {userInputs});
+export const sendMail = async (mail: string) => {
+	const {data} = await AuthServiceInstance.post(
+		"/forgot-password",
+		{mail},
+		{
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
 	return data;
 };
 
-export const fetchUser = async (user_id:string) =>{
-	const data = await UserInstance.get(`/get-user/${user_id}`)
-	return data
-}
+type ValType = {
+	otp: number;
+	mail: string;
+};
 
-export const sendMail = async(mail:string)=>{
-	// await AuthServiceInstance.post("/forgot-password",{mail},{headers:{
-	// 	"Content-Type":"application/json"
-	// }})
-	// throw new Error("prvode a valid email")
-	return true
-}
+export const sendOtp = async (val: ValType) => {
+	const {otp, mail} = val;
+	const {data} = await AuthServiceInstance.post(
+		"/otp",
+		{otp, mail},
+		{
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
+	return data;
+};
+
+export const updatePassword = async (newPass: string) => {
+	await AuthServiceInstance.post(
+		"/reset-password",
+		{newPass},
+		{
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
+};

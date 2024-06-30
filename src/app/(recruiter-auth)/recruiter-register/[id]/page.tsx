@@ -1,7 +1,7 @@
 "use client";
 
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 import {
@@ -16,29 +16,47 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Eye, EyeOffIcon} from "lucide-react";
 import {useState} from "react";
+import {useMutation} from "@tanstack/react-query";
+import {registerRecruiter} from "@/controllers/recruiterController";
+import {useToast} from "@/components/ui/use-toast";
 
 const recruiterSchema = z.object({
 	recruiter_name: z.string().min(3),
-	recuiter_email: z.string().email(),
-	recruiter_phone_number: z.string().optional(),
+	recruiter_email: z.string().email(),
+	phone: z.string(),
 	password: z.string().min(6),
 });
 
 export default function RecruiterRegister() {
 	const {id} = useParams();
 	const [show, setShow] = useState(false);
+	const {push} = useRouter();
+	const {toast} = useToast();
 
 	const form = useForm<z.infer<typeof recruiterSchema>>({
 		resolver: zodResolver<typeof recruiterSchema>(recruiterSchema),
 		defaultValues: {
 			recruiter_name: "",
-			recuiter_email: "",
-			recruiter_phone_number: "",
+			recruiter_email: "",
+			phone: "",
 			password: "",
 		},
 	});
 
-	const handleSubmit = () => {};
+	const {mutate} = useMutation({
+		mutationFn: registerRecruiter,
+		onSuccess: () => {
+			toast({
+				title: "success",
+				description: "registration complete",
+			});
+			push("/recruiter-login");
+		},
+	});
+
+	const handleSubmit = (values: z.infer<typeof recruiterSchema>) => {
+		mutate({id, ...values});
+	};
 
 	return (
 		<div className="w-[400px] h-auto py-12 px-9 flex flex-col gap-10 shadow-xl rounded-2xl border border-slate-200 border-opacity-30 dark:border dark:border-input">
@@ -63,7 +81,7 @@ export default function RecruiterRegister() {
 					/>
 					<FormField
 						control={form.control}
-						name="recuiter_email"
+						name="recruiter_email"
 						render={({field}) => (
 							<FormItem>
 								<FormLabel className="font-bold">User email</FormLabel>
@@ -76,12 +94,10 @@ export default function RecruiterRegister() {
 					/>
 					<FormField
 						control={form.control}
-						name="recruiter_phone_number"
+						name="phone"
 						render={({field}) => (
 							<FormItem>
-								<FormLabel className="font-bold">
-									User phone number(optional)
-								</FormLabel>
+								<FormLabel className="font-bold">User phone number</FormLabel>
 								<FormControl>
 									<Input {...field} />
 								</FormControl>

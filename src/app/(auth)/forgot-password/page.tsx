@@ -13,7 +13,7 @@ import {FormEvent} from "react";
 export default function ForgotPassword() {
 	const {push} = useRouter();
 
-	const {mutate} = useMutation({
+	const {mutate, isPending} = useMutation({
 		mutationFn: sendMail,
 		onError: (err) => {
 			const error = err as AxiosError<{message: string}>;
@@ -23,12 +23,12 @@ export default function ForgotPassword() {
 				variant: "destructive",
 			});
 		},
-		onSuccess: () => {
+		onSuccess: (res) => {
 			toast({
 				title: "Success",
 				description: "otp has send to mail",
 			});
-			push("/otp");
+			push("/otp/" + res.data.user_id);
 		},
 	});
 
@@ -52,6 +52,7 @@ export default function ForgotPassword() {
 					<Input type="email" name="email" />
 				</div>
 				<Button
+					disabled={isPending}
 					type="submit"
 					className="bg-purple-500 hover:bg-purple-400 dark:text-slate-100">
 					Send Otp

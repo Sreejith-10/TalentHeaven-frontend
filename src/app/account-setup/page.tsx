@@ -21,20 +21,23 @@ import {jwtDecode} from "jwt-decode";
 import {useToast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
 import {useMutation} from "@tanstack/react-query";
-import {createUser} from "@/controllers/userAuthController";
+import {createUser} from "@/controllers/userController";
 import {AxiosError} from "axios";
 import {X} from "lucide-react";
+import {Textarea} from "@/components/ui/textarea";
 
 export default function MultiStepForm() {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const {toast} = useToast();
 	const {push} = useRouter();
 	const [skills, setSkills] = useState<string[] | []>([]);
+	const [jobs, setJobs] = useState<string[] | []>([]);
+	const [tech, setTech] = useState<string[] | []>([]);
 
 	const {mutate, isPending} = useMutation({
 		mutationFn: createUser,
 		onSuccess: (res) => {
-			push("/");
+			push("/account");
 			toast({
 				title: "account setup complete",
 				description: res.data.message,
@@ -57,6 +60,8 @@ export default function MultiStepForm() {
 		defaultValues: {
 			fname: "",
 			lname: "",
+			profession: "",
+			about: "",
 			phone: "",
 			email: "",
 			skills: [""],
@@ -71,6 +76,15 @@ export default function MultiStepForm() {
 					start_date: "",
 					end_date: "",
 					marks: "",
+				},
+			],
+			job_preferences: [""],
+			projects: [
+				{
+					project_name: "",
+					project_description: "",
+					technologies_used: [""],
+					reference: "",
 				},
 			],
 		},
@@ -91,6 +105,16 @@ export default function MultiStepForm() {
 		remove: experienceFieldRemove,
 	} = useFieldArray({
 		name: "experience",
+		control: form.control,
+	});
+
+	const {
+		fields: projectsField,
+		append: projectsFieldAppend,
+		remove: projectsFieldRemove,
+		update,
+	} = useFieldArray({
+		name: "projects",
 		control: form.control,
 	});
 
@@ -241,7 +265,10 @@ export default function MultiStepForm() {
 
 							<div className="w-full flex justify-between">
 								<Button
-									onClick={() => setCurrentIndex((prev) => prev - 1)}
+									onClick={() => {
+										form.setValue("skills", skills);
+										setCurrentIndex((prev) => prev - 1);
+									}}
 									className="bg-red-500 hover:bg-red-400 dark:bg-red-500 dark:hover:bg-red-400">
 									Prev
 								</Button>
@@ -369,6 +396,185 @@ export default function MultiStepForm() {
 					)}
 
 					{currentIndex === 3 && (
+						<div className="space-y-5">
+							<h1 className="font-semibold text-[25px]">Projects</h1>
+							{projectsField.map((item, index) => {
+								return (
+									<div key={index} className="space-y-4">
+										<h1>Project #{index + 1}</h1>
+
+										<div>
+											<Label className="font-bold">Project name</Label>
+											<Input
+												type="text"
+												{...form.register(`projects.${index}.project_name`)}
+											/>
+										</div>
+
+										<div>
+											<Label className="font-bold">Project description</Label>
+											<Textarea
+												{...form.register(
+													`projects.${index}.project_description`
+												)}
+											/>
+										</div>
+
+										<div>
+											<Label className="font-bold">Technologies Used</Label>
+											<Input
+												type="text"
+												onChange={(e) => {
+													const t = e.target.value.trim();
+													setTech((prev) => [...prev, t]);
+													e.target.value = "";
+												}}
+											/>
+
+											{/* <div className="w-full h-auto flex flex-wrap gap-5">
+												{tech?.map((item, index) => (
+													<span
+														className="bg-slate-200 w-fit px-3 py-3 rounded-md flex justify-between gap-5"
+														key={index}>
+														<p className="font-semibold text-sm text-slate-700">
+															{item}
+														</p>
+														<X
+															size={20}
+															className="hover:cursor-pointer"
+															onClick={() => {
+																setTech((prev) =>
+																	prev.filter((iem, ind) => {
+																		if (ind !== index) {
+																			return item;
+																		}
+																	})
+																);
+															}}
+														/>
+													</span>
+												))}
+											</div> */}
+										</div>
+
+										<div>
+											<Label className="font-bold">Refrence</Label>
+											<Input
+												type="text"
+												{...form.register(`projects.${index}.reference`)}
+											/>
+										</div>
+
+										<br />
+										<div className="w-full flex justify-between">
+											{index >= 1 && (
+												<Button
+													onClick={() => {
+														projectsFieldRemove(index);
+													}}>
+													Remove
+												</Button>
+											)}
+											<Button
+												onClick={() => {
+													projectsFieldAppend({
+														project_name: "",
+														project_description: "",
+														technologies_used: [""],
+														reference: "",
+													});
+												}}>
+												Add Project
+											</Button>
+										</div>
+									</div>
+								);
+							})}
+
+							<br />
+							<div className="w-full flex justify-between">
+								<Button
+									onClick={() => setCurrentIndex((prev) => prev - 1)}
+									className="bg-red-500 hover:bg-red-400 dark:bg-red-500 dark:hover:bg-red-400">
+									Prev
+								</Button>
+								<Button
+									onClick={() => setCurrentIndex((prev) => prev + 1)}
+									className="bg-blue-500 hover:bg-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400">
+									Next
+								</Button>
+							</div>
+						</div>
+					)}
+
+					{currentIndex === 4 && (
+						<div>
+							<h1 className="font-semibold text-[25px]">Job preferences</h1>
+							<p>Add your prefered jobs</p>
+							<br />
+							<Input
+								type="text"
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										e.preventDefault();
+										const job = e.currentTarget.value;
+										setJobs((prev) => [...prev, job]);
+										e.currentTarget.value = "";
+									}
+								}}
+							/>
+							<br />
+
+							<div className="w-full h-auto flex flex-wrap gap-5">
+								{jobs?.map((item, index) => (
+									<span
+										className="bg-slate-200 w-fit px-3 py-3 rounded-md flex justify-between gap-5"
+										key={index}>
+										<p className="font-semibold text-sm text-slate-700">
+											{item}
+										</p>
+										<X
+											size={20}
+											className="hover:cursor-pointer"
+											onClick={() => {
+												setSkills((prev) =>
+													prev.filter((iem, ind) => {
+														if (ind !== index) {
+															return item;
+														}
+													})
+												);
+											}}
+										/>
+									</span>
+								))}
+							</div>
+							<br />
+
+							<div className="w-full flex justify-between">
+								<Button
+									onClick={() => {
+										form.setValue("job_preferences", jobs);
+										setCurrentIndex((prev) => prev - 1);
+									}}
+									className="bg-red-500 hover:bg-red-400 dark:bg-red-500 dark:hover:bg-red-400">
+									Prev
+								</Button>
+								<Button
+									onClick={() => {
+										{
+											form.setValue("job_preferences", jobs);
+											setCurrentIndex((prev) => prev + 1);
+										}
+									}}
+									className="bg-blue-500 hover:bg-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400">
+									Next
+								</Button>
+							</div>
+						</div>
+					)}
+
+					{currentIndex === 5 && (
 						<div className="space-y-5">
 							<h1 className="font-semibold text-[25px]">Experience</h1>
 							{experienceFields.map((item, index) => {

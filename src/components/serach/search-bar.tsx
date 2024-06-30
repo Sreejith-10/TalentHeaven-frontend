@@ -3,29 +3,25 @@
 import {MapPinnedIcon, Search} from "lucide-react";
 import {Button} from "../ui/button";
 import {useState} from "react";
-import {useRouter, useSearchParams} from "next/navigation";
-import {useMutation} from "@tanstack/react-query";
+import {useParams, useRouter, useSearchParams} from "next/navigation";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {searchJob} from "@/controllers/jobController";
 
 const SerachBar = () => {
-	const params = useSearchParams();
+	const [query, setQuery] = useState("");
+	const [location, setLocation] = useState("");
 
-	const [jobTitle, setJobTitle] = useState(params.get("q"));
-	const [jobLocation, setJobLocation] = useState(params.get("location"));
-
-	const {push} = useRouter();
-
-	const {mutate} = useMutation({
-		mutationFn: searchJob,
-	});
-
-	const searchHandler = async () => {
-		mutate({q: "", l: ""});
-	};
+	const url = new URL(window.location.href);
+	const search = new URLSearchParams(url.search);
 
 	const clickHandler = () => {
-		push(`/search?q=${jobTitle}&location=${jobLocation}`);
-		searchHandler();
+		search.set("job", query);
+		search.set("location", location);
+		window.history.pushState(
+			{},
+			"",
+			`${url.origin}${url.pathname}?${search.toString()}`
+		);
 	};
 
 	return (
@@ -34,8 +30,8 @@ const SerachBar = () => {
 				<Search />
 				<input
 					name="job-title"
-					value={jobTitle ? jobTitle : ""}
-					onChange={(e) => setJobTitle(e.target.value)}
+					value={query ? query : ""}
+					onChange={(e) => setQuery(e.target.value)}
 					type="text"
 					className="h-[30px] p-2 outline-none bg-transparent font-semibold placeholder:font-medium"
 					placeholder="Job title or keyword"
@@ -46,8 +42,8 @@ const SerachBar = () => {
 				<MapPinnedIcon />
 				<input
 					name="job-location"
-					value={jobLocation ? jobLocation : ""}
-					onChange={(e) => setJobLocation(e.target.value)}
+					value={location ? location : ""}
+					onChange={(e) => setLocation(e.target.value)}
 					type="text"
 					className="h-[30px] p-2 outline-none bg-transparent font-semibold placeholder:font-medium"
 					placeholder="Prefred location (optional)"
@@ -56,8 +52,7 @@ const SerachBar = () => {
 			<div className="hidden sm:block space-x-4">
 				<Button
 					onClick={() => {
-						setJobTitle("");
-						setJobLocation("");
+						history.replaceState(null, "", "/search?query=all");
 					}}
 					className="rounded-full bg-white sm:bg-slate-300 sm:hover:bg-slate-400 hover:bg-white text-slate-900 dark:bg-inherit dark:text-slate-50">
 					Clear
@@ -70,8 +65,7 @@ const SerachBar = () => {
 			</div>
 			<Button
 				onClick={() => {
-					setJobTitle("");
-					setJobLocation("");
+					history.replaceState(null, "", "/search?query=all");
 				}}
 				className="rounded-full sm:hidden bg-white sm:bg-slate-300 sm:hover:bg-slate-400 hover:bg-white text-slate-900 dark:bg-inherit dark:text-slate-50">
 				Clear

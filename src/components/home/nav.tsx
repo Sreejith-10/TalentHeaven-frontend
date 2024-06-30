@@ -6,18 +6,18 @@ import {useScrollDirection} from "@/hooks/userScrollDirection";
 import Link from "next/link";
 import {Toggle} from "../ui/toggle";
 import DropDown from "./drop-down";
-import {authStore} from "@/store/auth-store";
+import {useAuthStore} from "@/store/auth-store";
 import {Menu, X} from "lucide-react";
 import Image from "next/image";
 
 const Nav = () => {
 	const [isAtTop, setIsAtTop] = useState(true);
-	const isAuthenticated = authStore((state) => state.isAuthenticated);
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const [sidebar, setSidebar] = useState(false);
 
 	const navigations = [
 		{link: "Home", to: "/"},
-		{link: "Find Jobs", to: "/search"},
+		{link: "Find Jobs", to: "/search?query=all"},
 		{link: "Hire", to: "/dashboard"},
 		{link: "Companies", to: "/companies"},
 		{link: "Contact", to: "/contact"},
@@ -111,7 +111,9 @@ const Nav = () => {
 								key={index}
 								onClick={() => setCurrentIndex(index)}
 								className={`${
-									currentIndex === index ? "text-purple-600 hover:text-purple-500" : ""
+									currentIndex === index
+										? "text-purple-600 hover:text-purple-500"
+										: ""
 								} font-medium cursor-pointer hover:text-purple-400 transition-all px-2 py-1 z-10`}>
 								<Link href={item.to}>{item.link}</Link>
 							</li>

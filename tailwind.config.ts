@@ -72,6 +72,28 @@ const config = {
 					from: {height: "var(--radix-accordion-content-height)"},
 					to: {height: "0"},
 				},
+				"pop-up":{
+					"0%":{
+						transform:"scale(0)"
+					},
+					"100%":{
+						transform:"scale(1)"
+					}
+				},
+				blob: {
+					"0%": {
+						transform: "scale(1)",
+					},
+					"33%": {
+						transform: "scale(1.1)",
+					},
+					"66%": {
+						transform: "scale(0.9)",
+					},
+					"100%": {
+						transform: "scale(1)",
+					},
+				},
 				move: {
 					"0%": {
 						transform: "translateX(100%)",
@@ -80,11 +102,22 @@ const config = {
 						transform: "translateX(0%)",
 					},
 				},
+				"width-slide":{
+					"0%":{
+						width : "100%"
+					},
+					"100%":{
+						width:"0%"
+					}
+				}
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
+				blob: "blob 7s infinite",
 				move: "move .4s ease-in-out",
+				"width-slide":"width-slide .4s ease-in-out",
+				"pop-up":"pop-up .3s ease-in"
 			},
 		},
 	},

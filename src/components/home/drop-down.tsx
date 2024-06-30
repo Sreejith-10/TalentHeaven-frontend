@@ -12,12 +12,15 @@ import {useToast} from "../ui/use-toast";
 import {useMutation} from "@tanstack/react-query";
 import {logOutUser} from "@/controllers/userAuthController";
 import Cookie from "js-cookie";
-import {authStore} from "@/store/auth-store";
+import {useAuthStore} from "@/store/auth-store";
 import Link from "next/link";
+import {useUserStore} from "@/store/userStore";
 
 const DropDown = () => {
 	const {toast} = useToast();
-	const updateAuth = authStore((state) => state.updateAuth);
+	const updateAuth = useAuthStore((state) => state.updateAuth);
+	const userId = useUserStore((state) => state.userId);
+	const updateUserId = useUserStore((state) => state.updateUserId);
 
 	const {mutate} = useMutation({
 		mutationFn: logOutUser,
@@ -34,6 +37,7 @@ const DropDown = () => {
 				description: "user logged out",
 			});
 			updateAuth(false);
+			updateUserId("");
 			localStorage.removeItem("session_id");
 			Cookie.remove("access_token");
 		},
@@ -56,10 +60,15 @@ const DropDown = () => {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="mt-2 cursor-pointer">
 				<DropdownMenuLabel>
-					<Link href={"/account"}>My account</Link>
+					<Link href={"/account/" + userId}>My account</Link>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuLabel>Notifications</DropdownMenuLabel>
+				<DropdownMenuLabel>
+					<Link href={"/applications/" + userId}>Applications</Link>
+				</DropdownMenuLabel>
+				<DropdownMenuLabel>
+					<Link href={"/notifications"}>Notifications</Link>
+				</DropdownMenuLabel>
 				<DropdownMenuLabel>Messages</DropdownMenuLabel>
 				<DropdownMenuLabel>Settings</DropdownMenuLabel>
 				<DropdownMenuSeparator />

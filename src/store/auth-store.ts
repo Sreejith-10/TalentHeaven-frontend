@@ -5,7 +5,7 @@ type AuthStore = {
 	updateAuth: (val: boolean) => void;
 };
 
-export const authStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set) => ({
 	isAuthenticated: false,
 	updateAuth: (val: boolean) => {
 		set({isAuthenticated: val});

@@ -14,11 +14,12 @@ import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/use-toast";
 import {loginUser} from "@/controllers/userAuthController";
 import {loginSchema} from "@/schemas/login-schema";
-import {authStore} from "@/store/auth-store";
+import {useAuthStore} from "@/store/auth-store";
+import {useUserStore} from "@/store/userStore";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useMutation} from "@tanstack/react-query";
 import {AxiosError} from "axios";
-import {Eye, EyeOffIcon} from "lucide-react";
+import {Check, Eye, EyeOffIcon, Loader2} from "lucide-react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -27,8 +28,9 @@ import * as z from "zod";
 
 export default function Login() {
 	const {toast} = useToast();
-	const {push} = useRouter();
-	const updateAuth = authStore((state) => state.updateAuth);
+	const {push, back} = useRouter();
+	const updateAuth = useAuthStore((state) => state.updateAuth);
+	const updateUserId = useUserStore((state) => state.updateUserId);
 	const [show, setShow] = useState(false);
 
 	const form = useForm<z.infer<typeof loginSchema>>({
@@ -39,21 +41,25 @@ export default function Login() {
 		},
 	});
 
-	const {mutate, data, isPending} = useMutation({
+	const {mutate, data, isPending, isSuccess} = useMutation({
 		mutationFn: loginUser,
 		onSuccess: (res) => {
-			push("/");
+			updateUserId(res.user.user_id);
 			updateAuth(true);
-			toast({title: "Succes", description: res.data.message, duration: 3000});
-			localStorage.setItem("session_id", JSON.stringify(res.data.session_id));
+			back();
+			toast({title: "Succes", description: res.message, duration: 1500});
+			localStorage.setItem("session_id", JSON.stringify(res.session_id));
 		},
 		onError: (error) => {
 			const err = error as AxiosError<{message: string; err: any}>;
+			console.log(err);
 			toast({
 				variant: "destructive",
 				title: "Error",
-				description: err.response?.data.message,
-				duration: 3000,
+				description: err.response?.data
+					? err.response?.data.message
+					: "cannot login",
+				duration: 2000,
 			});
 		},
 	});
@@ -135,8 +141,17 @@ export default function Login() {
 					</div>
 					<Button
 						type="submit"
-						className="bg-purple-600 hover:bg-purple-400 dark:bg-transparent dark:hover:bg-purple-600 dark:text-white dark:border dark:border-input">
+						className={`${
+							isSuccess
+								? "bg-emerald-500 hover:bg-emerald-400 dark:bg-transparent dark:hover:bg-emerald-600"
+								: "bg-purple-600 hover:bg-purple-400 dark:bg-transparent dark:hover:bg-purple-600"
+						}  dark:text-white dark:border dark:border-input`}
+						disabled={isPending}>
 						Login
+						{isPending && <Loader2 className="ml-3 animate-spin" />}
+						{isSuccess && (
+							<Check className="ml-3 animate-pop-up rounded-full border border-slate-50" />
+						)}
 					</Button>
 				</form>
 			</Form>

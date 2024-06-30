@@ -18,8 +18,12 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {useToast} from "@/components/ui/use-toast";
+import {registerCompany} from "@/controllers/recruiterController";
 import {comapnyRegistrationSchema} from "@/schemas/company-registration-schema";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useMutation} from "@tanstack/react-query";
+import {AxiosError} from "axios";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
@@ -27,17 +31,18 @@ import * as z from "zod";
 
 export default function RegisterCompany() {
 	const {push} = useRouter();
+	const {toast} = useToast();
 
 	const form = useForm<z.infer<typeof comapnyRegistrationSchema>>({
 		resolver: zodResolver(comapnyRegistrationSchema),
 		defaultValues: {
 			company_name: "",
-			comapny_about: "",
+			company_about: "",
 			company_country: "",
 			company_state: "",
-			comapny_city: "",
+			company_city: "",
 			company_address: "",
-			refrence: "",
+			reference: "",
 			phone_number: "",
 		},
 	});
@@ -46,10 +51,25 @@ export default function RegisterCompany() {
 	const [searchState, setSearchState] = useState("");
 	const [searchCity, setSearchCity] = useState("");
 
+	const {mutate} = useMutation({
+		mutationFn: registerCompany,
+		onSuccess: ({data}) => {
+			const {message, company_id} = data;
+			push("/recruiter-register/" + company_id);
+		},
+		onError: (err) => {
+			const error = err as AxiosError<{message: string; err: any}>;
+			toast({
+				title: "error",
+				description: error.message,
+			});
+		},
+	});
+
 	const countryList = ["America", "India", "USA", "France", "Gana"];
 
-	const submitHandler = () => {
-		push("/recruiter-register/1234");
+	const submitHandler = (values: z.infer<typeof comapnyRegistrationSchema>) => {
+		mutate(values);
 	};
 
 	return (
@@ -79,9 +99,10 @@ export default function RegisterCompany() {
 								</FormItem>
 							)}
 						/>
+
 						<FormField
 							control={form.control}
-							name="comapny_about"
+							name="company_about"
 							render={({field}) => (
 								<FormItem>
 									<FormLabel className="font-bold">About</FormLabel>
@@ -100,7 +121,26 @@ export default function RegisterCompany() {
 								<FormItem>
 									<FormLabel className="font-bold">Telephone</FormLabel>
 									<FormControl>
-										<Input {...field} />
+										<Input {...field} required />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="reference"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel className="font-bold">
+										Reference{" "}
+										<span className="text-slate-600">
+											(like website,linkdin)
+										</span>
+									</FormLabel>
+									<FormControl>
+										<Input {...field} required />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -115,15 +155,10 @@ export default function RegisterCompany() {
 							render={({field}) => (
 								<FormItem className="m-0">
 									<FormLabel className="font-bold">Country</FormLabel>
-									<Select
-										onValueChange={() => {
-											field.onChange;
-											setSearchCountry("");
-										}}
-										defaultValue="full time">
+									<Select onValueChange={field.onChange} defaultValue="">
 										<FormControl>
 											<SelectTrigger>
-												<SelectValue placeholder="select a value" />
+												<SelectValue placeholder="select a country" />
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
@@ -163,11 +198,39 @@ export default function RegisterCompany() {
 								</FormItem>
 							)}
 						/>
+
+						<FormField
+							control={form.control}
+							name="company_city"
+							render={({field}) => (
+								<FormItem className="m-0">
+									<FormLabel className="font-bold">City</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="company_address"
+							render={({field}) => (
+								<FormItem className="m-0">
+									<FormLabel className="font-bold">Full Address</FormLabel>
+									<FormControl>
+										<Textarea {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 
 					<Button
 						type="submit"
-						className="bg-purple-600 hover:bg-purple-400 dark:bg-transparent dark:hover:bg-purple-600 dark:text-white dark:border dark:border-input">
+						className="bg-purple-600 col-span-2 hover:bg-purple-400 dark:bg-transparent dark:hover:bg-purple-600 dark:text-white dark:border dark:border-input">
 						Register
 					</Button>
 				</form>
