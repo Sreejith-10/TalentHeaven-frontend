@@ -9,6 +9,7 @@ import DropDown from "./drop-down";
 import {useAuthStore} from "@/store/auth-store";
 import {Menu, X} from "lucide-react";
 import Image from "next/image";
+import TransitionLink from "../ui/transition-link";
 
 const Nav = () => {
 	const [isAtTop, setIsAtTop] = useState(true);
@@ -115,7 +116,7 @@ const Nav = () => {
 										? "text-purple-600 hover:text-purple-500"
 										: ""
 								} font-medium cursor-pointer hover:text-purple-400 transition-all px-2 py-1 z-10`}>
-								<Link href={item.to}>{item.link}</Link>
+								<TransitionLink href={item.to}>{item.link}</TransitionLink>
 							</li>
 						))}
 					</ul>

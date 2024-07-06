@@ -35,8 +35,8 @@ export default function Page() {
 		3: <Projects user={currentUser} />,
 	};
 
-	const {data} = useQuery({
-		queryKey: ["job", id],
+	const {data, error} = useQuery({
+		queryKey: ["single-job", id],
 		queryFn: () => getJobById(id),
 	});
 
@@ -57,7 +57,7 @@ export default function Page() {
 	return (
 		<div className="w-full h-full bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 rounded-2xl p-6 flex gap-5">
 			<div className="w-1/2 h-[780px] overflow-auto hide-scroll-bar">
-				<div className="w-full flex flex-col gap-5 py-3 px-4 sticky top-0 left-0 z-50 bg-slate-50">
+				<div className="w-full flex flex-col gap-5 py-3 px-4 sticky top-0 left-0 z-50 bg-slate-50 dark:bg-slate-900">
 					<div>
 						<h1 className="font-semibold text-2xl">
 							Applications for {data?.role}
@@ -84,9 +84,16 @@ export default function Page() {
 					</div>
 				</div>
 				<div className="w-full flex flex-col gap-5">
+					{data?.applications.length == 0 && <h1>0 Applications</h1>}
 					{data?.applications
-						.filter((item) => item.status !== "rejected")
-						.map((app, index) => (
+						?.sort((a, b) => {
+							const order: {[key: string]: number} = {
+								applied: 0,
+								rejected: 1,
+							};
+							return order[a.status] - order[b.status];
+						})
+						?.map((app, index) => (
 							<UserCard
 								app={app}
 								onclickhandler={(data) => setCurrentUser(data)}
@@ -96,7 +103,7 @@ export default function Page() {
 				</div>
 			</div>
 			<div className="w-1/2 h-[780px] overflow-auto hide-scroll-bar">
-				<div className="w-full h-auto sticky top-0 bg-slate-50">
+				<div className="w-full h-auto sticky top-0 bg-slate-50 dark:bg-slate-900">
 					<div className="w-full p-4 flex flex-col gap-10 ">
 						<div className="space-y-4">
 							<h1 className="font-semibold text-xl">Candidate Details</h1>
@@ -118,13 +125,30 @@ export default function Page() {
 									</div>
 								</div>
 								<div className="space-x-3">
-									<Button className="bg-blue-500 hover:bg-blue-400">
+									<Button
+										disabled={data?.applications.some(
+											(app) =>
+												app.user_id === currentUser?.user_id &&
+												app.status === "rejected"
+										)}
+										className="bg-blue-500 hover:bg-blue-400">
 										Accept
 									</Button>
 									<Button
+										disabled={data?.applications.some(
+											(app) =>
+												app.user_id === currentUser?.user_id &&
+												app.status === "rejected"
+										)}
 										onClick={() => rejectApp(currentUser?.user_id!)}
 										className="bg-destructive hover:bg-destructive/50">
-										Reject
+										{data?.applications.some(
+											(app) =>
+												app.user_id === currentUser?.user_id &&
+												app.status === "rejected"
+										)
+											? "Rejected"
+											: "Reject"}
 									</Button>
 								</div>
 							</div>

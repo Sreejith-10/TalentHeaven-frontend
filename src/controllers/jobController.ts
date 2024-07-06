@@ -27,15 +27,19 @@ export const createJob = async (inputs: {values: any; id: any}) => {
 	}
 };
 
+export const fetchRecentJobs = async () => {
+	const {data} = await JobServiceInstance.get("/recent-jobs");
+	return data;
+};
+
 export const getJob = async () => {
 	const {data} = await JobServiceInstance.get("/get-jobs");
 	return data;
 };
 
 export const getJobById = async (id: any) => {
-	const {queryKey} = id
 	const {data}: {data: {job: JobType}} = await JobServiceInstance.get(
-		"/get-job/" + queryKey[1]
+		"/get-job/" + id
 	);
 	return data.job;
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import {Bell, User} from "lucide-react";
-import {usePathname} from "next/navigation";
 import {Toggle} from "../ui/toggle";
 import {
 	DropdownMenu,
@@ -18,7 +17,6 @@ import Cookie from "js-cookie";
 import {useRecruiterStore} from "@/store/useRecruiterStore";
 
 const Header = () => {
-	const path = usePathname();
 	const {toast} = useToast();
 	const setAuth = useRecruiterStore((state) => state.updateRecruiterAuth);
 
@@ -51,9 +49,7 @@ const Header = () => {
 	return (
 		<div className="w-full flex items-center justify-between">
 			<div>
-				<h1 className="font-semibold text-2xl">
-					{path.replace("/", "").toUpperCase()}
-				</h1>
+				<h1 className="font-semibold text-2xl">Dashboard</h1>
 			</div>
 			<div className="flex items-center gap-5">
 				<Toggle size={30} />

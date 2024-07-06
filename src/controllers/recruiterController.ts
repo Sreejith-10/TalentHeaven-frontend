@@ -1,5 +1,5 @@
 import {RecruiterServiceInstance} from "@/lib/axios";
-import { CompanyType } from "@/lib/types";
+import { CompanyType, RecuiterType } from "@/lib/types";
 
 export const registerCompany = async (comapnyData: any) => {
 	const {data} = await RecruiterServiceInstance.post(
@@ -46,7 +46,13 @@ export const refresh = async (id: string) => {
 	return data;
 };
 
-export const fetchCompany = async (key: string | undefined) => {
+export const fetchCompany = async (key: string) => {
 	const {data}:{data:{company:CompanyType}} = await RecruiterServiceInstance.get("/company/" + key);
 	return data.company;
 };
+
+
+export const fetchRecruiter = async (key: string) => {
+	const {data}:{data:{recruiter:RecuiterType}} = await RecruiterServiceInstance.get("/get-recruiter/" + key);
+	return data.recruiter
+}

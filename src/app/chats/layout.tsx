@@ -1,4 +1,5 @@
 import Nav from "@/components/home/nav";
+import SectionWrapper from "@/components/wrapper/section-wrapper";
 
 export default function ChatLayout({
 	children,
@@ -8,7 +9,9 @@ export default function ChatLayout({
 	return (
 		<main className="w-full h-auto relative">
 			<Nav />
-			<div className="pt-[100px]">{children}</div>
+			<div className="pt-[100px]">
+				<SectionWrapper>{children}</SectionWrapper>
+			</div>
 		</main>
 	);
 }

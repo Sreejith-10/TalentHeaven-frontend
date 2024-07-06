@@ -15,6 +15,7 @@ export const ProtectedRoute = ({children}: {children: ReactNode}) => {
 	const auth = useRecruiterStore((state) => state.isRecruiterAuthenticated);
 	const setAuth = useRecruiterStore((state) => state.updateRecruiterAuth);
 	const setCompanyId = useRecruiterStore((state) => state.updateCompanyId);
+	const setId = useRecruiterStore((state) => state.updateRecruiterId);
 
 	const {mutate} = useMutation({
 		mutationFn: refresh,
@@ -38,6 +39,8 @@ export const ProtectedRoute = ({children}: {children: ReactNode}) => {
 			const payload = jwtDecode(access);
 			//@ts-expect-error typo
 			setCompanyId(payload.cmp_id);
+			//@ts-expect-error typo
+			setId(payload.id);
 
 			//@ts-expect-error typo
 			if (payload.admin) {

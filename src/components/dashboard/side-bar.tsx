@@ -1,3 +1,6 @@
+"use client";
+
+import {useRecruiterStore} from "@/store/useRecruiterStore";
 import {
 	Building,
 	FileIcon,
@@ -9,6 +12,8 @@ import {
 import Link from "next/link";
 
 const SideBar = () => {
+	const id = useRecruiterStore((state) => state.recuiterId);
+
 	return (
 		<div className="w-full h-full">
 			<div className="py-5 flex flex-col items-center justify-center">
@@ -41,7 +46,7 @@ const SideBar = () => {
 					</div>
 					<div className="flex items-center gap-5">
 						<Mail />
-						<Link href={"/dashboard/messages"} className="font-semibold">
+						<Link href={"/dashboard/messages/" + id} className="font-semibold">
 							Messages
 						</Link>
 					</div>

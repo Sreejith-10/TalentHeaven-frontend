@@ -16,6 +16,7 @@ import {loginUser} from "@/controllers/userAuthController";
 import {loginSchema} from "@/schemas/login-schema";
 import {useAuthStore} from "@/store/auth-store";
 import {useUserStore} from "@/store/userStore";
+import {delay} from "@/utils/delay";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useMutation} from "@tanstack/react-query";
 import {AxiosError} from "axios";
@@ -46,9 +47,11 @@ export default function Login() {
 		onSuccess: (res) => {
 			updateUserId(res.user.user_id);
 			updateAuth(true);
-			back();
 			toast({title: "Succes", description: res.message, duration: 1500});
 			localStorage.setItem("session_id", JSON.stringify(res.session_id));
+			delay(2000).then(() => {
+				back();
+			});
 		},
 		onError: (error) => {
 			const err = error as AxiosError<{message: string; err: any}>;

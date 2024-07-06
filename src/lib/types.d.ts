@@ -72,3 +72,17 @@ export type CompanyType = {
 	phone_number: string;
 	reference: string;
 };
+
+export type RecruiterType = {
+	company_id: string;
+	recruiter_id: string;
+	recruiter_name: string;
+	recruiter_email: string;
+	phone: string;
+};
+
+export type ChatType = {
+	sender_id: string;
+	message: string;
+	date: number;
+};

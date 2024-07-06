@@ -5,17 +5,29 @@ import {useQuery} from "@tanstack/react-query";
 import {Link2} from "lucide-react";
 import {useRecruiterStore} from "@/store/useRecruiterStore";
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
 
 export default function Company() {
 	const company_id = useRecruiterStore((state) => state.companyId);
 
-	const {data, isPending, isSuccess, isError} = useQuery({
+	const {data, isLoading, isSuccess, isError, refetch} = useQuery({
 		queryKey: ["company", company_id],
 		queryFn: () => fetchCompany(company_id),
 	});
 
-	if (isPending) {
+	if (isLoading) {
 		return <div>loading ...</div>;
+	}
+
+	if (isError) {
+		return (
+			<div className="space-y-3">
+				<h1 className="font-semibold text-2xl">
+					something went wrong try again
+				</h1>
+				<Button onClick={() => refetch()}>Try agin</Button>
+			</div>
+		);
 	}
 
 	if (isSuccess)

@@ -69,7 +69,9 @@ const DropDown = () => {
 				<DropdownMenuLabel>
 					<Link href={"/notifications"}>Notifications</Link>
 				</DropdownMenuLabel>
-				<DropdownMenuLabel>Messages</DropdownMenuLabel>
+				<DropdownMenuLabel>
+					<Link href={"/chats/" + userId}>Messages</Link>
+				</DropdownMenuLabel>
 				<DropdownMenuLabel>Settings</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuLabel onClick={logoutUser}>Logout</DropdownMenuLabel>

@@ -15,18 +15,23 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import {addToChatList} from "@/controllers/chatController";
 import {getAllApplications} from "@/controllers/jobController";
 import {UserType} from "@/lib/types";
 import {useRecruiterStore} from "@/store/useRecruiterStore";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {Briefcase, School, TrafficCone, User2} from "lucide-react";
 import Image from "next/image";
-import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
+import Cookie from "js-cookie";
+import {jwtDecode} from "jwt-decode";
 
 export default function Page() {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [currentUser, setCurrentUser] = useState<UserType>();
 	const cmpId = useRecruiterStore((state) => state.companyId);
+	const {push} = useRouter();
 
 	const tabs: {[key: number]: JSX.Element} = {
 		0: <Personal user={currentUser} />,
@@ -35,18 +40,45 @@ export default function Page() {
 		3: <Projects user={currentUser} />,
 	};
 
-	const {data} = useQuery({
+	const {data, isLoading, isError, refetch} = useQuery({
 		queryKey: ["applications", cmpId],
 		queryFn: () => getAllApplications(cmpId!),
 		enabled: !!cmpId,
 	});
 
-	console.log(data);
+	const {mutate, isSuccess} = useMutation({
+		mutationFn: addToChatList,
+	});
+
+	const clickHandler = () => {
+		const access = Cookie.get("access_token");
+		const payload: {id: string} = jwtDecode(access!);
+		mutate({uid: payload.id, rid: currentUser?.user_id});
+	};
+
+	useEffect(() => {
+		console.log(isSuccess);
+	}, [isSuccess]);
+
+	if (isLoading) {
+		return <div>loading ...</div>;
+	}
+
+	if (isError) {
+		return (
+			<div className="space-y-3">
+				<h1 className="font-semibold text-2xl">
+					something went wrong try again
+				</h1>
+				<Button onClick={() => refetch()}>Try agin</Button>
+			</div>
+		);
+	}
 
 	return (
 		<div className="w-full h-full bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 rounded-2xl p-6 flex gap-5">
 			<div className="w-1/2 h-[780px] overflow-auto hide-scroll-bar">
-				<div className="w-full flex flex-col gap-5 py-3 px-4 sticky top-0 left-0 z-50 bg-slate-50">
+				<div className="w-full flex flex-col gap-5 py-3 px-4 sticky top-0 left-0 z-50 bg-slate-50 dark:bg-slate-900">
 					<div>
 						<h1 className="font-semibold text-2xl">All Applications</h1>
 					</div>
@@ -81,12 +113,12 @@ export default function Page() {
 				</div>
 			</div>
 			<div className="w-1/2 h-[780px] overflow-auto hide-scroll-bar">
-				<div className="w-full h-auto sticky top-0 bg-slate-50">
+				<div className="w-full h-auto sticky top-0 bg-slate-50 dark:bg-slate-900">
 					<div className="w-full p-4 flex flex-col gap-10 ">
 						<div className="space-y-4">
 							<h1 className="font-semibold text-xl">Candidate Details</h1>
-							<div className="flex items-end gap-4 justify-between">
-								<div className="flex gap-4">
+							<div className="w-full flex gap-4 justify-between">
+								<div className="flex items-start gap-5 w-fit">
 									<Image
 										src={"/icons/Default_pfp.svg.png"}
 										width={70}
@@ -102,7 +134,15 @@ export default function Page() {
 										</h2>
 									</div>
 								</div>
-								<div className="space-x-3">
+								<div className="grid grid-cols-2 gap-5">
+									<Button className="bg-purple-500 hover:bg-purple-400">
+										View Resume
+									</Button>
+									<Button
+										onClick={clickHandler}
+										className="text-center bg-emerald-500 hover:bg-emerald-400 text-slate-50 rounded-md">
+										Message
+									</Button>
 									<Button className="bg-blue-500 hover:bg-blue-400">
 										Accept
 									</Button>

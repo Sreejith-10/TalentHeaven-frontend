@@ -33,7 +33,7 @@ export const createUser = async (userInputs: UserInputType) => {
 	return data;
 };
 
-export const fetchUser = async (user_id: string) => {
+export const fetchUser = async (user_id: string | undefined) => {
 	const {data}: {data: {user: UserType}} = await UserServiceInstance.get(
 		`/get-user/${user_id}`
 	);

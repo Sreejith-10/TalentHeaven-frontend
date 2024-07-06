@@ -10,7 +10,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import {Eye, EyeOffIcon} from "lucide-react";
+import {Eye, EyeOffIcon, Loader2} from "lucide-react";
 import {useState} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
@@ -20,6 +20,7 @@ import {login} from "@/controllers/recruiterController";
 import {useToast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import {AxiosError} from "axios";
 
 const loginSchema = z.object({
 	email: z.string().email(),
@@ -38,7 +39,7 @@ export default function Login() {
 		},
 	});
 
-	const {mutate} = useMutation({
+	const {mutate, isPending} = useMutation({
 		mutationFn: login,
 		onSuccess: (res) => {
 			push("/dashboard");
@@ -46,8 +47,13 @@ export default function Login() {
 			localStorage.setItem("session_id", JSON.stringify(res.data.session_id));
 		},
 		onError: (err) => {
-			toast({title: "Error", duration: 3000});
-			console.log(err);
+			const error = err as AxiosError<{message: string}>;
+			toast({
+				title: "Error",
+				description: error?.response?.data.message,
+				variant: "error",
+				duration: 3000,
+			});
 		},
 	});
 
@@ -120,6 +126,7 @@ export default function Login() {
 						type="submit"
 						className="bg-purple-600 hover:bg-purple-400 dark:bg-transparent dark:hover:bg-purple-600 dark:text-white dark:border dark:border-input">
 						Login
+						{isPending && <Loader2 className="ml-3 animate-spin" />}
 					</Button>
 				</form>
 			</Form>

@@ -24,7 +24,7 @@ export default function Jobs() {
 	const {push} = useRouter();
 	const id = useRecruiterStore((state) => state.companyId);
 
-	const {data} = useQuery({
+	const {data, isLoading, isError, refetch} = useQuery({
 		queryKey: ["joblist", id],
 		queryFn: () => getJobsByCompanyId(id!),
 	});
@@ -134,7 +134,6 @@ export default function Jobs() {
 								}}>
 								View applications
 							</DropdownMenuItem>
-							<DropdownMenuItem>View payment details</DropdownMenuItem>
 							<DropdownMenuItem>Stop accecpting applications</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
@@ -142,6 +141,21 @@ export default function Jobs() {
 			},
 		},
 	];
+
+	if (isLoading) {
+		return <div>loading ...</div>;
+	}
+
+	if (isError) {
+		return (
+			<div className="space-y-3">
+				<h1 className="font-semibold text-2xl">
+					something went wrong try again
+				</h1>
+				<Button onClick={() => refetch()}>Try agin</Button>
+			</div>
+		);
+	}
 
 	return (
 		<div className="w-full h-full bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
