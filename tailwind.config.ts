@@ -72,13 +72,13 @@ const config = {
 					from: {height: "var(--radix-accordion-content-height)"},
 					to: {height: "0"},
 				},
-				"pop-up":{
-					"0%":{
-						transform:"scale(0)"
+				"pop-up": {
+					"0%": {
+						transform: "scale(0)",
 					},
-					"100%":{
-						transform:"scale(1)"
-					}
+					"100%": {
+						transform: "scale(1)",
+					},
 				},
 				blob: {
 					"0%": {
@@ -102,22 +102,97 @@ const config = {
 						transform: "translateX(0%)",
 					},
 				},
-				"width-slide":{
-					"0%":{
-						width : "100%"
+				"width-slide": {
+					"0%": {
+						width: "100%",
 					},
-					"100%":{
-						width:"0%"
-					}
-				}
+					"100%": {
+						width: "0%",
+					},
+				},
+				"slide-lin": {
+					"0%": {
+						transform: "translateX(20%)",
+						opacity: "0",
+					},
+					"100%": {
+						transform: "translateX(0%)",
+						opacity: "1",
+					},
+				},
+				"slide-rin": {
+					"0%": {
+						transform: "translateX(-20%)",
+						opacity: "0",
+					},
+					"100%": {
+						transform: "translateX(0%)",
+						opacity: "1",
+					},
+				},
+				"slide-up": {
+					"0%": {
+						transform: "translateY(20%)",
+						opacity: "0",
+					},
+					"100%": {
+						transform: "translateY(0%)",
+						opacity: "1",
+					},
+				},
+
+				grow: {
+					"0%": {
+						top: "30px",
+						left: "30px",
+						width: "0",
+						height: "0",
+						opacity: "0",
+					},
+					"4.9%": {
+						top: "36px",
+						left: "36px",
+						width: "0",
+						height: "0",
+						opacity: "0",
+					},
+					"5%": {
+						top: "36px",
+						left: "36px",
+						width: "0",
+						height: "0",
+						opacity: "1",
+					},
+					"100%": {
+						top: "0",
+						left: "0",
+						width: "72px",
+						height: "72px",
+						opacity: "0",
+					},
+				},
+				"gradient-x": {
+					"0%": {
+						"background-position": "0% 50%",
+					},
+					"100%": {
+						"background-position": "100% 50%",
+					},
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
 				blob: "blob 7s infinite",
 				move: "move .4s ease-in-out",
-				"width-slide":"width-slide .4s ease-in-out",
-				"pop-up":"pop-up .3s ease-in"
+				"width-slide": "width-slide .4s ease-in-out",
+				"pop-up": "pop-up .3s ease-in",
+				"slide-up": "slide-up .4s ease-in-out",
+				"slide-lin": "slide-lin .4s ease-in-out",
+				"slide-rin": "slide-rin .4s ease-in-out",
+				grow: "grow 1.2s linear infinite",
+				"grow-slow": "grow -0.5s linear infinite",
+				"gradient-x" : "gradient-x .5s ease-in-out infinite"
 			},
 		},
 	},

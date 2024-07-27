@@ -1,6 +1,5 @@
 import SectionWrapper from "@/components/wrapper/section-wrapper";
 import HeroSeachBar from "../hero-search-bar";
-import LoadingTag from "@/components/ui/loading-tag";
 
 const Hero = () => {
 	return (
@@ -14,9 +13,9 @@ const Hero = () => {
 			</div>
 
 			<div className="absolute top-[50%] left-[60%] -z-50">
+				<div className="w-[300px] h-[300px] bg-purple-500 bb blur-lg opacity-80 dark:blur-md absolute left-[240px] animate-blob [animation-delay:10s]"></div>
 				<div className="w-[300px] h-[300px] bg-purple-400 bb blur-lg opacity-80 dark:blur-md absolute top-1/2 animate-blob"></div>
 				<div className="w-[300px] h-[300px] bg-purple-600 bb blur-lg opacity-80 dark:blur-md absolute bottom-[-70px] left-[150px] animate-blob [animation-delay:5s]"></div>
-				<div className="w-[300px] h-[300px] bg-purple-500 bb blur-lg opacity-80 dark:blur-md absolute left-[240px] animate-blob [animation-delay:10s]"></div>
 			</div>
 
 			<SectionWrapper>
@@ -24,13 +23,11 @@ const Hero = () => {
 					{/* <h1 className="text-[120px] font-semibold md:text-cente sm:text-3xl">
 						Talent <span className="text-purple-600">Heaven</span>
 					</h1> */}
-					<LoadingTag>
-						<h1
-							className="
+					<h1
+						className="
 								text-[120px] font-semibold md:text-cente sm:text-3xl relative">
-							Talent <span className="text-purple-600">Heaven</span>
-						</h1>
-					</LoadingTag>
+						Talent <span className="text-purple-600">Heaven</span>
+					</h1>
 					<h2 className="text-[50px] font-semibold sm:text-xl">
 						{" "}
 						Finding a Job You Deserve

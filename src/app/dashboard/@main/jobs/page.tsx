@@ -7,16 +7,28 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuPortal,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {ReactTable} from "@/components/ui/table/react-table";
-import {getJobsByCompanyId} from "@/controllers/jobController";
+import {
+	getAllApplications,
+	getJobsByCompanyId,
+} from "@/controllers/jobController";
 import {JobType} from "@/lib/types";
 import {useRecruiterStore} from "@/store/useRecruiterStore";
 import {useQuery} from "@tanstack/react-query";
 import {ColumnDef} from "@tanstack/react-table";
-import {ArrowUpDown, MoreHorizontal} from "lucide-react";
+import {
+	AlertTriangle,
+	ArrowUpDown,
+	Loader2,
+	MoreHorizontal,
+} from "lucide-react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 
@@ -27,6 +39,11 @@ export default function Jobs() {
 	const {data, isLoading, isError, refetch} = useQuery({
 		queryKey: ["joblist", id],
 		queryFn: () => getJobsByCompanyId(id!),
+	});
+
+	const {data: app} = useQuery<{job_id: string; applications: []}[]>({
+		queryKey: ["applications_length", id],
+		queryFn: () => getAllApplications(id!),
 	});
 
 	const columns: ColumnDef<JobType>[] = [
@@ -72,14 +89,14 @@ export default function Jobs() {
 			accessorKey: "vaccancy",
 			header: ({column}) => (
 				<div
-					className="flex items-center gap-1"
+					className="flex items-center justify-center gap-1"
 					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
 					Vaccancy
 					<ArrowUpDown className="ml-2 h-4 w-4" />
 				</div>
 			),
 			cell: ({row}) => (
-				<div className="text-start font-medium ">
+				<div className="text-center font-medium ">
 					{row.getValue("vaccancy")}
 				</div>
 			),
@@ -93,24 +110,56 @@ export default function Jobs() {
 		},
 		{
 			accessorKey: "applications",
-			header: () => <div className="text-right">Applications</div>,
+			header: () => <div className="text-center">Applications</div>,
 			cell: ({row}) => {
-				const len: [] = row.getValue("applications");
+				const len = app?.find((item) => item.job_id === row.original._id);
 
-				return <div className="text-right font-medium">{len.length}</div>;
+				return (
+					<div className="text-center font-medium">
+						{len?.applications.length}
+					</div>
+				);
 			},
 		},
 		{
-			accessorKey: "applications_end_date",
-			header: () => <div className="text-right">End date</div>,
+			accessorKey: "applications_start_date",
+			header: ({column}) => (
+				<div
+					className="flex gap-1 items-center justify-center"
+					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+					Application Start date
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</div>
+			),
 			cell: ({row}) => (
-				<div className="text-right font-medium">
+				<div className="font-medium text-center">
+					{row.getValue("applications_start_date")}
+				</div>
+			),
+		},
+		{
+			accessorKey: "applications_end_date",
+			header: ({column}) => (
+				<div
+					className="flex gap-1 items-center justify-center"
+					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+					Application End date
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</div>
+			),
+			cell: ({row}) => (
+				<div className="font-medium text-center">
 					{row.getValue("applications_end_date")}
 				</div>
 			),
 		},
 
 		{
+			header: () => (
+				<div>
+					<h1>Actions</h1>
+				</div>
+			),
 			id: "actions",
 			enableHiding: false,
 			cell: ({row}) => {
@@ -135,6 +184,15 @@ export default function Jobs() {
 								View applications
 							</DropdownMenuItem>
 							<DropdownMenuItem>Stop accecpting applications</DropdownMenuItem>
+							<DropdownMenuSub>
+								<DropdownMenuSubTrigger>Options</DropdownMenuSubTrigger>
+								<DropdownMenuPortal>
+									<DropdownMenuSubContent>
+										<DropdownMenuItem>stop accecpting</DropdownMenuItem>
+										<DropdownMenuItem>hired </DropdownMenuItem>
+									</DropdownMenuSubContent>
+								</DropdownMenuPortal>
+							</DropdownMenuSub>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				);
@@ -142,38 +200,44 @@ export default function Jobs() {
 		},
 	];
 
-	if (isLoading) {
-		return <div>loading ...</div>;
-	}
-
-	if (isError) {
-		return (
-			<div className="space-y-3">
-				<h1 className="font-semibold text-2xl">
-					something went wrong try again
-				</h1>
-				<Button onClick={() => refetch()}>Try agin</Button>
-			</div>
-		);
-	}
-
 	return (
 		<div className="w-full h-full bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
-			<div className="w-full h-fit flex justify-between">
-				<h1 className="font-semibold text-2xl">Job Lists</h1>
-				<Link
-					href={"/dashboard/jobs/create"}
-					className="w-fit bg-blue-500 text-slate-50 py-3 px-4 rounded-xl">
-					Post Job
-				</Link>
-			</div>
-			<div>
-				{data ? (
-					<ReactTable data={data} columns={columns} />
-				) : (
-					<h1>Loading .. . </h1>
-				)}
-			</div>
+			{isLoading && (
+				<div className="w-full h-full flex items-center justify-center flex-col gap-5">
+					<Loader2 className="size-20 animate-spin" />
+					<p className="font-semibold text-slate-700">Loading please wait</p>
+				</div>
+			)}
+			{isError && (
+				<div className="w-full h-full flex items-center justify-center flex-col gap-5">
+					<AlertTriangle className="size-20" />
+					<h1 className="font-semibold text-slate-700">something went wrong</h1>
+					<span
+						onClick={() => refetch()}
+						className="bg-purple-500 px-8 py-2 text-slate-50 rounded-md shadow-xl cursor-pointer hover:bg-purple-400 active:shadow-none select-none">
+						retry
+					</span>
+				</div>
+			)}
+			{data && (
+				<>
+					<div className="w-full h-fit flex justify-between">
+						<h1 className="font-semibold text-2xl">Job Lists</h1>
+						<Link
+							href={"/dashboard/jobs/create"}
+							className="w-fit bg-blue-500 text-slate-50 py-2 px-4 rounded-xl">
+							Post Job
+						</Link>
+					</div>
+					<div>
+						{data ? (
+							<ReactTable data={data} columns={columns} />
+						) : (
+							<h1>Loading .. . </h1>
+						)}
+					</div>
+				</>
+			)}
 		</div>
 	);
 }

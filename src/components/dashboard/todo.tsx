@@ -13,11 +13,7 @@ const Todo = () => {
 			</div>
 			<div className="w-full h-auto">
 				<div className="w-full h-full px-5 py-3 flex flex-col gap-5">
-					{Array(5)
-						.fill("")
-						.map((item, index) => (
-							<TodoItem key={index} />
-						))}
+					<TodoItem />
 				</div>
 			</div>
 		</div>

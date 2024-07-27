@@ -16,6 +16,7 @@ const UserServiceInstance = axios.create({
 	baseURL: "http://localhost:3003/user",
 	timeout: 5000,
 	withCredentials: true,
+	
 });
 
 const JobServiceInstance = axios.create({

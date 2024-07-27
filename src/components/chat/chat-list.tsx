@@ -9,7 +9,7 @@ import {io} from "socket.io-client";
 
 const socket = io("http://localhost:3006");
 
-const ChatList = ({id}: {id: string}) => {
+const ChatList = ({id, uid}: {id: string; uid: string}) => {
 	const {data} = useQuery({
 		queryKey: ["chat-list", id],
 		queryFn: () => getChatLists(id!),
@@ -64,7 +64,7 @@ const User = ({id, onclick}: {id: string; onclick: (id: string) => void}) => {
 	});
 
 	useEffect(() => {
-		update(company!, data);
+		update(company!, data!);
 	}, [data, company]);
 
 	return (

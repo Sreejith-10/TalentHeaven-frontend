@@ -13,8 +13,8 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {accountSchema} from "@/schemas/account-setup-schema";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
+import {useMemo, useState} from "react";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import * as z from "zod";
 import Cookie from "js-cookie";
 import {jwtDecode} from "jwt-decode";
@@ -23,8 +23,16 @@ import {useRouter} from "next/navigation";
 import {useMutation} from "@tanstack/react-query";
 import {createUser} from "@/controllers/userController";
 import {AxiosError} from "axios";
-import {X} from "lucide-react";
+import {Trash, X} from "lucide-react";
 import {Textarea} from "@/components/ui/textarea";
+import {
+	DialogDescription,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function MultiStepForm() {
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,6 +73,7 @@ export default function MultiStepForm() {
 			phone: "",
 			email: "",
 			skills: [""],
+			references: [{link_name: "Personal website or portfolio", link_path: ""}],
 			experience: [
 				{company_name: "", position: "", end_date: "", start_date: ""},
 			],
@@ -115,6 +124,15 @@ export default function MultiStepForm() {
 		update,
 	} = useFieldArray({
 		name: "projects",
+		control: form.control,
+	});
+
+	const {
+		fields: referenceField,
+		append: referenceFieldAppend,
+		remove: referenceFieldRemove,
+	} = useFieldArray({
+		name: "references",
 		control: form.control,
 	});
 
@@ -239,15 +257,11 @@ export default function MultiStepForm() {
 
 							<div className="w-full h-auto flex flex-wrap gap-5">
 								{skills?.map((item, index) => (
-									<span
-										className="bg-slate-200 w-fit px-3 py-3 rounded-md flex justify-between gap-5"
-										key={index}>
-										<p className="font-semibold text-sm text-slate-700">
-											{item}
-										</p>
-										<X
-											size={20}
-											className="hover:cursor-pointer"
+									<div
+										key={index}
+										className="bg-slate-300 px-4 py-1 rounded-md cursor-pointer relative group hover:bg-red-500 transition-all ease-in-out">
+										<button
+											className="absolute left-0 right-0 grid place-content-center z-[-10] group-hover:z-[10] transition-all  ease-in-out"
 											onClick={() => {
 												setSkills((prev) =>
 													prev.filter((iem, ind) => {
@@ -256,9 +270,13 @@ export default function MultiStepForm() {
 														}
 													})
 												);
-											}}
-										/>
-									</span>
+											}}>
+											<Trash size={20} className="text-slate-50" />
+										</button>
+										<p className="font-semibold text-sm text-slate-800  group-hover:opacity-0 transition-all ease-in-out">
+											{item}
+										</p>
+									</div>
 								))}
 							</div>
 							<br />
@@ -527,26 +545,26 @@ export default function MultiStepForm() {
 
 							<div className="w-full h-auto flex flex-wrap gap-5">
 								{jobs?.map((item, index) => (
-									<span
-										className="bg-slate-200 w-fit px-3 py-3 rounded-md flex justify-between gap-5"
-										key={index}>
-										<p className="font-semibold text-sm text-slate-700">
-											{item}
-										</p>
-										<X
-											size={20}
-											className="hover:cursor-pointer"
+									<div
+										key={index}
+										className="bg-slate-300 px-4 py-1 rounded-md cursor-pointer relative group hover:bg-red-500 transition-all ease-in-out">
+										<button
+											className="absolute left-0 right-0 grid place-content-center z-[-10] group-hover:z-[10] transition-all  ease-in-out"
 											onClick={() => {
-												setSkills((prev) =>
+												setJobs((prev) =>
 													prev.filter((iem, ind) => {
 														if (ind !== index) {
 															return item;
 														}
 													})
 												);
-											}}
-										/>
-									</span>
+											}}>
+											<Trash size={20} className="text-slate-50" />
+										</button>
+										<p className="font-semibold text-sm text-slate-800  group-hover:opacity-0 transition-all ease-in-out">
+											{item}
+										</p>
+									</div>
 								))}
 							</div>
 							<br />
@@ -652,10 +670,53 @@ export default function MultiStepForm() {
 									Prev
 								</Button>
 								<Button
-									type="submit"
-									className="bg-emerald-500 hover:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-400">
-									Submit
+									onClick={() => setCurrentIndex((prev) => prev + 1)}
+									className="bg-blue-500 hover:bg-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400">
+									Next
 								</Button>
+							</div>
+						</div>
+					)}
+
+					{currentIndex === 6 && (
+						<div className="space-y-5">
+							<h1 className="font-semibold text-[25px]">References</h1>
+
+							{referenceField.map((field, index) => (
+								<div key={index} className="space-y-2">
+									<div className="w-fit flex items-center gap-3">
+										<Label className="font-bold">{field.link_name}</Label>
+										{field.link_name !== "Personal website or portfolio" && (
+											<span className="cursor-pointer">
+												<Trash
+													className="size-5 hover:text-destructive"
+													onClick={() => {
+														referenceFieldRemove(index);
+													}}
+												/>
+											</span>
+										)}
+									</div>
+									<Input
+										type="text"
+										{...form.register(`references.${index}.link_path`)}
+									/>
+								</div>
+							))}
+
+							<div className="w-full flex flex-col items-start gap-5">
+								<ReferenceSelect
+									appendNewField={referenceFieldAppend}
+									fields={referenceField}
+								/>
+
+								<div className="w-full flex justify-end">
+									<Button
+										type="submit"
+										className="bg-emerald-500 hover:bg-emerald-400 dark:bg-emerald-500 dark:hover:bg-emerald-400 float-right">
+										Submit
+									</Button>
+								</div>
 							</div>
 						</div>
 					)}
@@ -664,3 +725,59 @@ export default function MultiStepForm() {
 		</div>
 	);
 }
+
+const ReferenceSelect = ({
+	appendNewField,
+	fields,
+}: {
+	appendNewField: any;
+	fields: {id: string; link_name: string; link_path: string}[];
+}) => {
+	const refs = [
+		{name: "linkedin"},
+		{name: "twitter"},
+		{name: "github"},
+		{name: "stackoverflow"},
+	];
+
+	return (
+		<Dialog>
+			<DialogTrigger>
+				<span className="bg-purple-600 text-slate-50 px-3 py-2 rounded-lg font-medium text-sm hover:bg-purple-400">
+					add reference
+				</span>
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Select</DialogTitle>
+					<DialogDescription>
+						Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione,
+						cum?
+					</DialogDescription>
+				</DialogHeader>
+
+				<div className="space-y-3">
+					{refs
+						.filter((ref) => {
+							return fields.every((field) => {
+								return field.link_name !== ref.name;
+							});
+						})
+						.map((ref, idx) => (
+							<div
+								onClick={() => {
+									appendNewField({
+										link_name: ref.name,
+										link_path: "",
+									});
+								}}
+								key={idx}
+								className="w-full border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-lg py-2 px-3">
+								{ref.name}
+							</div>
+						))}
+				</div>
+			</DialogContent>
+		</Dialog>
+	);
+};

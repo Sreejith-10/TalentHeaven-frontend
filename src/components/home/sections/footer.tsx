@@ -1,4 +1,13 @@
-import {Copyright, Facebook, Instagram, MailboxIcon, Zap} from "lucide-react";
+import {
+	Copyright,
+	Facebook,
+	Github,
+	Instagram,
+	Mail,
+	MailboxIcon,
+	Twitter,
+	Zap,
+} from "lucide-react";
 import SectionWrapper from "../../wrapper/section-wrapper";
 import {Button} from "../../ui/button";
 import {Input} from "../../ui/input";
@@ -132,6 +141,9 @@ const Footer = () => {
 						<div className="flex gap-5">
 							<Facebook />
 							<Instagram />
+							<Twitter />
+							<Github />
+							<Mail />
 						</div>
 					</div>
 				</footer>

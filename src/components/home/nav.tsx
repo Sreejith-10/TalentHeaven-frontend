@@ -10,8 +10,11 @@ import {useAuthStore} from "@/store/auth-store";
 import {Menu, X} from "lucide-react";
 import Image from "next/image";
 import TransitionLink from "../ui/transition-link";
+import {usePathname} from "next/navigation";
 
 const Nav = () => {
+	const path = usePathname();
+
 	const [isAtTop, setIsAtTop] = useState(true);
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const [sidebar, setSidebar] = useState(false);
@@ -112,7 +115,7 @@ const Nav = () => {
 								key={index}
 								onClick={() => setCurrentIndex(index)}
 								className={`${
-									currentIndex === index
+									item.to === path
 										? "text-purple-600 hover:text-purple-500"
 										: ""
 								} font-medium cursor-pointer hover:text-purple-400 transition-all px-2 py-1 z-10`}>
@@ -128,13 +131,15 @@ const Nav = () => {
 					) : (
 						<div className="flex items-center gap-2">
 							<Link
+								aria-label="register-anchor"
 								href={"/register"}
-								className="text-purple-600 text-lg border border-purple-600 px-4 py-1 rounded-md">
+								className="text-purple-600 text-base border border-purple-600 px-4 py-1 rounded-md hover:bg-purple-200 ease-in-out transition-colors">
 								Register
 							</Link>
 							<Link
+								aria-label="login-anchor"
 								href={"/login"}
-								className="bg-purple-600 text-white px-8 py-2 rounded-md">
+								className="bg-purple-600 text-white px-8 py-1 rounded-md hover:bg-purple-400 ease-in-out transition-colors">
 								Login
 							</Link>
 						</div>

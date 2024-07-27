@@ -1,48 +1,103 @@
 "use client";
 
-import {EllipsisVertical} from "lucide-react";
-import Image from "next/image";
-import KeyBoard from "./keyboard";
-import Message from "./message";
-import {useSearchParams} from "next/navigation";
-import {useQuery} from "@tanstack/react-query";
 import {getChat} from "@/controllers/chatController";
+import {ChatType} from "@/lib/types";
+import {useChatStore} from "@/store/useChatStore";
+import {timeDifference} from "@/utils/time-difference";
+import {useInfiniteQuery} from "@tanstack/react-query";
+import {EllipsisVertical, Loader2, TriangleAlertIcon} from "lucide-react";
+import Image from "next/image";
+import {useSearchParams} from "next/navigation";
+import {useEffect, useRef, useState} from "react";
 import {io} from "socket.io-client";
-import {useEffect, useRef} from "react";
+import Message from "./message";
+import KeyBoard from "./keyboard";
 
-const socket = io("http://localhost:3006");
+const MessageSection = ({uid}: {uid: string | undefined}) => {
+	const socket = io("http://localhost:3006", {timeout: 2000});
 
-const MessageSection = () => {
-	const query = useSearchParams();
-	const q = query.get("q");
+	const cacheChat = useChatStore((state) => state.cachedChats);
+	const setCacheChat = useChatStore((state) => state.updateCachedChats);
+	const clearCache = useChatStore((state) => state.clearChat);
 
+	const param = useSearchParams();
+
+	const q = param.get("q");
+
+	const sender = useChatStore((state) => state.sender);
 	const chatRef = useRef<HTMLDivElement>(null);
 
+	//listening to message reception
 	useEffect(() => {
-		socket.on("connection_success", (d) => {
-			console.log(d.message);
+		socket.on("recieve_chat_message", (d) => {
+			const {content}: {content: ChatType} = d;
+			setCacheChat(content);
 		});
 
+		return () => {
+			socket.off("recieve_chat_message");
+		};
+	}, [socket]);
+
+	useEffect(() => {
 		socket.emit("join_chat", {id: q});
 
-		socket.on("recieve_chat_message", (d) => {
-			console.log(d);
-			// setRececentChats((prev) => [...prev, d.content]);
-		});
+		return () => {
+			socket.emit("leave_chat", {});
+		};
+	}, [q, socket]);
+
+	const {
+		data: chats,
+		fetchNextPage,
+		isFetchingNextPage,
+		isFetchNextPageError,
+		isRefetching,
+		refetch,
+		isLoading,
+	} = useInfiniteQuery({
+		queryKey: ["chat", q],
+		queryFn: getChat,
+		initialPageParam: 1,
+		getNextPageParam: (allPage, lastPage, firstPage) => {
+			if (lastPage[lastPage.length - 1].length === 0) {
+				return undefined;
+			}
+			return lastPage.length + 1;
+		},
+	});
+
+	useEffect(() => {
+		const tempRef = chatRef.current;
+		const listener = () => {
+			const top = tempRef?.scrollTop;
+
+			if (top === 0) {
+				fetchNextPage();
+			}
+		};
+
+		tempRef?.addEventListener("scroll", listener);
+
+		return () => {
+			tempRef?.removeEventListener("scroll", listener);
+		};
 	}, []);
 
-	const {data: chats} = useQuery({
-		queryKey: ["recruiterchats", q],
-		queryFn: () => getChat(q),
-		enabled: Boolean(query.size),
-	});
+	useEffect(() => {
+		if (isRefetching) {
+			clearCache([]);
+		}
+	}, [isRefetching]);
+
+	console.log(isRefetching);
 
 	useEffect(() => {
 		chatRef.current?.scrollTo({
 			top: chatRef.current.scrollHeight,
 			behavior: "smooth",
 		});
-	}, [chats]);
+	}, [cacheChat, q]);
 
 	return (
 		<div className="w-full h-[820px] flex flex-col items-center justify-between ">
@@ -57,24 +112,60 @@ const MessageSection = () => {
 						/>
 					</div>
 					<div>
-						<h1 className="font-semibold text-lg">User name</h1>
+						<h1 className="font-semibold text-lg">
+							{sender?.comapny?.company_name}
+						</h1>
+						<h1 className="font-semibold text-base">
+							{sender?.recruiter?.recruiter_name}
+						</h1>
 					</div>
 				</div>
 				<div>
 					<EllipsisVertical className="size-6" />
 				</div>
 			</div>
-			<div
-				className="w-full h-full px-4 py-3 overflow-auto bg-purple-100"
-				ref={chatRef}>
-				<div className="w-full space-y-6 ">
-					{chats?.messages?.map((item, index) => (
-						<Message message={item} key={index} />
+			<div className={`w-full h-full overflow-auto`} ref={chatRef}>
+				{isFetchingNextPage && (
+					<div className="w-full h-auto flex items-center justify-center gap-3 bg-slate-500/30 py-3">
+						<h1 className="font-semibold lowercase">Loading</h1>
+						<Loader2 className="animate-spin" />
+					</div>
+				)}
+				{isLoading && (
+					<div className="w-full h-auto flex items-center justify-center gap-3 bg-slate-500/30 py-3">
+						<h1 className="font-semibold lowercase">Loading</h1>
+						<Loader2 className="animate-spin" />
+					</div>
+				)}
+				{isFetchNextPageError && (
+					<div className="w-full h-auto flex items-center justify-center gap-3 bg-destructive/30 py-3">
+						<h1 className="font-semibold text-destructive lowercase">Error</h1>
+						<TriangleAlertIcon className="text-destructive" />
+					</div>
+				)}
+				<div className="w-full space-y-6 px-4 py-3">
+					{chats?.pages
+						.map((subPage: ChatType[]) =>
+							subPage.map(
+								(
+									item: {message: string; date: number; sender_id: string},
+									index: number
+								) => (
+									<div key={index}>
+										{/* <h1>{timeDifference(item.date)}</h1> */}
+										<Message uid={uid} message={item} />
+									</div>
+								)
+							)
+						)
+						.reverse()}
+					{cacheChat.map((item, index) => (
+						<Message uid={uid} message={item} key={index} />
 					))}
 				</div>
 			</div>
 			<div className="w-full h-fit border-t border-slate-300 dark:border-slate-700">
-				<KeyBoard />
+				<KeyBoard uid={uid} />
 			</div>
 		</div>
 	);

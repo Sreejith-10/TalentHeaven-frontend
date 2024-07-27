@@ -10,7 +10,7 @@ import {useToast} from "@/components/ui/use-toast";
 import {useAuthStore} from "@/store/auth-store";
 import {jwtDecode} from "jwt-decode";
 import {useUserStore} from "@/store/userStore";
-import Loader from "@/components/loader";
+import Loader from "@/components/ui/loaders/loader";
 
 export const AuthProvider = ({children}: {children: ReactNode}) => {
 	const [initial, setInitial] = useState(true);
@@ -31,10 +31,17 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 		onError: (err) => {
 			updateAuth(false);
 			const error = err as AxiosError;
-			if (error.message === "Network Error") setInitial(false);
+			if (error.message === "Network Error") {
+				toast({title:"Bad network",description:"network is bad or slow",variant:"info"})
+				setInitial(false);
+			}
+			if (error?.response?.status === 404) {
+				return push("/get-started");
+			}
 			if (error.status === 401) {
 				push("/login");
 				setInitial(false);
+				return;
 			}
 		},
 	});
@@ -48,6 +55,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 		}
 
 		if (!token) {
+			//TODO: if a recruiter is logged in the the logic should be differ from normal user
 			mutate(session_id!);
 		} else {
 			const payload = jwtDecode(token);

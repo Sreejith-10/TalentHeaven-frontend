@@ -1,4 +1,13 @@
 import {AuthServiceInstance} from "@/lib/axios";
+import {delay} from "@/utils/delay";
+
+export const registerUser = async (values: {email: string; password: string}) => {
+	const {data} = await AuthServiceInstance.post("/register", values, {
+		headers: {"Content-Type": "application/json"},
+	});
+
+	return data;
+};
 
 export const loginUser = async (values: {email: string; password: string}) => {
 	const {data} = await AuthServiceInstance.post("/login", values, {
@@ -18,7 +27,6 @@ export const logOutUser = async (id: string) => {
 	return data;
 };
 
-
 export const sendMail = async (mail: string) => {
 	const {data} = await AuthServiceInstance.post(
 		"/forgot-password",
@@ -34,14 +42,14 @@ export const sendMail = async (mail: string) => {
 
 type ValType = {
 	otp: number;
-	mail: string;
+	id: string;
 };
 
 export const sendOtp = async (val: ValType) => {
-	const {otp, mail} = val;
+	const {otp, id} = val;
 	const {data} = await AuthServiceInstance.post(
 		"/otp",
-		{otp, mail},
+		{otp, id},
 		{
 			headers: {
 				"Content-Type": "application/json",
@@ -51,14 +59,21 @@ export const sendOtp = async (val: ValType) => {
 	return data;
 };
 
-export const updatePassword = async (newPass: string) => {
-	await AuthServiceInstance.post(
+export const resentOtp = async (id: string | undefined) => {
+	const {data} = await AuthServiceInstance.post("/resend-otp", {id});
+	await delay(2000);
+	return data;
+};
+
+export const updatePassword = async ({newPassword, id}: any) => {
+	const {data} = await AuthServiceInstance.post(
 		"/reset-password",
-		{newPass},
+		{newPassword, id},
 		{
 			headers: {
 				"Content-Type": "application/json",
 			},
 		}
 	);
+	return data;
 };

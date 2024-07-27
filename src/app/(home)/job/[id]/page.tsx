@@ -1,8 +1,13 @@
 "use client";
 
 import {Button} from "@/components/ui/button";
+import JobCard from "@/components/ui/cards/job-card";
 import {useToast} from "@/components/ui/use-toast";
-import {applyForJob, getJobById} from "@/controllers/jobController";
+import {
+	applyForJob,
+	getJobById,
+	getJobsByCompanyId,
+} from "@/controllers/jobController";
 import {fetchCompany} from "@/controllers/recruiterController";
 import {
 	fetchSavedJobs,
@@ -50,8 +55,8 @@ export default function Job() {
 	});
 
 	const {data: company, error} = useQuery({
-		queryFn: () => fetchCompany(job?.company_id),
 		queryKey: ["company", job?.company_id],
+		queryFn: () => fetchCompany(job?.company_id!),
 		enabled: !!job?.company_id,
 	});
 
@@ -64,6 +69,12 @@ export default function Job() {
 	const {data: saved} = useQuery({
 		queryKey: ["saved", user],
 		queryFn: () => fetchSavedJobs(user),
+	});
+
+	const {data: moreJobs} = useQuery({
+		queryKey: ["other-jobs", company],
+		queryFn: () => getJobsByCompanyId(company?.company_id!),
+		enabled: Boolean(company?.company_id),
 	});
 
 	const {mutate: save} = useMutation({
@@ -90,7 +101,7 @@ export default function Job() {
 
 	const apply = () => {
 		if (user) {
-			mutate({job_id: id, user_id: user});
+			mutate({company_id: company?.company_id!, job_id: id, user_id: user});
 		} else {
 			push("/login");
 		}
@@ -236,19 +247,37 @@ export default function Job() {
 									<h3>Full time</h3>
 								</div>
 							</div>
-							<br />
-							<div className="w-full flex">
-								<div className="w-3/12 grid place-content-center">
-									<Calendar className="size-8" />
-								</div>
-								<div>
-									<h2 className="font-semibold text-lg dark:text-slate-300">
-										Duration
-									</h2>
-									<h3>1 month</h3>
-								</div>
-							</div>
+							{job?.job_type === "internship" && (
+								<>
+									<br />
+									<div className="w-full flex">
+										<div className="w-3/12 grid place-content-center">
+											<Calendar className="size-8" />
+										</div>
+										<div>
+											<h2 className="font-semibold text-lg dark:text-slate-300">
+												Duration
+											</h2>
+											<h3>{job?.duration} month</h3>
+										</div>
+									</div>
+								</>
+							)}
 						</div>
+					</div>
+				</div>
+
+				<div className="mt-10">
+					<h1 className="font-semibold text-2xl">
+						Other jobs from {company?.company_name}
+					</h1>
+					<div className="grid grid-cols-3 gap-5 py-5">
+						{moreJobs
+							?.filter((job) => job._id !== id)
+							.slice(0, 9)
+							.map((job, index) => (
+								<JobCard job={job} key={index} className="w-full" />
+							))}
 					</div>
 				</div>
 			</div>

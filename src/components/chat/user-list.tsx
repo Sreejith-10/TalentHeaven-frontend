@@ -2,13 +2,13 @@
 
 import {getChatLists} from "@/controllers/chatController";
 import {fetchUser} from "@/controllers/userController";
-import {useRecruiterStore} from "@/store/useRecruiterStore";
+import {useChatStore} from "@/store/useChatStore";
 import {useQuery} from "@tanstack/react-query";
 import {EllipsisVertical, Search} from "lucide-react";
 import Image from "next/image";
 
-const UserList = ({id}: {id: string}) => {
-	const uid = useRecruiterStore((state) => state.recuiterId);
+const UserList = ({id, uid}: {id: string; uid: string | undefined}) => {
+	const clearCache = useChatStore((state) => state.clearChat);
 
 	const {data} = useQuery({
 		queryKey: ["chat-list", id],
@@ -24,11 +24,12 @@ const UserList = ({id}: {id: string}) => {
 			"",
 			`${url.origin}${url.pathname}?${search.toString()}`
 		);
+		clearCache([]);
 	};
 
 	return (
 		<div className="w-full h-[800px] overflow-auto hide-scroll-bar">
-			<div className="w-full flex items-center justify-between sticky top-0 bg-slate-50 dark:bg-slate-900 p-5 rounded-t-xl">
+			<div className="w-full flex items-center justify-between sticky top-0 bg-slate-50 dark:bg-slate-900 p-5 rounded-t-2xl rounded-tr-none">
 				<div className="h-auto bg-slate-100 border border-slate-800 border-opacity-10 rounded-full flex items-center justify-evenly px-4">
 					<input className="p-2 outline-none bg-transparent font-semibold placeholder:font-medium" />
 					<Search className="size-7" />
@@ -57,6 +58,8 @@ const User = ({
 		queryKey: ["chat-user", user_id],
 		queryFn: () => fetchUser(user_id),
 	});
+
+	console.log(data);
 
 	return (
 		<div

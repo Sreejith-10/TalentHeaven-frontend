@@ -8,7 +8,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "../dialog";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Input} from "../input";
 import {Label} from "../label";
 import {Button} from "../button";
@@ -22,6 +22,10 @@ const EditPreferences = ({value}: {value: string[] | undefined}) => {
 	const setUser = useUserStore((state) => state.updateUserData);
 	const {toast} = useToast();
 	const [prefer, setPrefer] = useState<string[] | []>(value!);
+
+	useEffect(() => {
+		setPrefer(value!);
+	}, [value]);
 
 	const dialogRef = useRef<HTMLButtonElement>(null);
 
@@ -92,7 +96,10 @@ const EditPreferences = ({value}: {value: string[] | undefined}) => {
 							Save changes
 							{isPending && <Loader2 className="ml-3 animate-spin" />}
 						</Button>
-						<DialogClose ref={dialogRef} asChild>
+						<DialogClose
+							ref={dialogRef}
+							asChild
+							onClick={() => setPrefer(value!)}>
 							<Button variant="outline" type="button">
 								Cancel changes
 							</Button>

@@ -34,9 +34,9 @@ const schema = z.object({
 });
 
 const EditProfile = ({
-	defaultValues,
+	values,
 }: {
-	defaultValues: {
+	values: {
 		fname: string | undefined;
 		lname: string | undefined;
 		profession: string | undefined;
@@ -51,9 +51,9 @@ const EditProfile = ({
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver<typeof schema>(schema),
 		defaultValues: {
-			fname: defaultValues?.fname,
-			lname: defaultValues?.lname,
-			profession: defaultValues?.profession,
+			fname: values?.fname,
+			lname: values?.lname,
+			profession: values?.profession,
 		},
 	});
 

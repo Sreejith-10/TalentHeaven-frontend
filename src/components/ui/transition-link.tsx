@@ -2,7 +2,7 @@
 
 import Link, {LinkProps} from "next/link";
 import {useRouter} from "next/navigation";
-import {MouseEvent, ReactNode} from "react";
+import {MouseEvent, ReactNode, useEffect, useState, useTransition} from "react";
 
 interface TransitionLinkProps extends LinkProps {
 	children: ReactNode;
@@ -15,6 +15,8 @@ const delay = (ms: number) => {
 
 const TransitionLink = ({children, href, ...props}: TransitionLinkProps) => {
 	const {push} = useRouter();
+	const [changed, setChanged] = useState(false);
+
 	const onTransition = async (
 		e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>
 	) => {
@@ -25,10 +27,17 @@ const TransitionLink = ({children, href, ...props}: TransitionLinkProps) => {
 			body?.classList.add("page-transistion");
 			await delay(1000);
 			push(href);
-			await delay(1000);
-			body?.classList.remove("page-transistion");
+			setChanged(true);
 		}
 	};
+
+	useEffect(() => {
+		delay(500).then(() => {
+			setChanged(false);
+			const body = document.querySelector("body");
+			body?.classList.remove("page-transistion");
+		});
+	}, [changed]);
 
 	return (
 		<Link href={href} {...props} onClick={onTransition}>

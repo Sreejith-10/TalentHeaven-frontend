@@ -8,7 +8,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "../dialog";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Input} from "../input";
 import {Label} from "../label";
 import {Button} from "../button";
@@ -18,11 +18,15 @@ import {useUserStore} from "@/store/userStore";
 import {useToast} from "../use-toast";
 
 const EditSkills = ({value}: {value: string[] | undefined}) => {
+	const [skills, setSkills] = useState<string[] | []>(value!);
+
+	useEffect(() => {
+		setSkills(value!.slice());
+	}, [value]);
+
 	const setUser = useUserStore((state) => state.updateUserData);
 	const uid = useUserStore((state) => state.userId);
 	const {toast} = useToast();
-
-	const [skills, setSkills] = useState<string[] | []>(value!);
 
 	const dialogRef = useRef<HTMLButtonElement>(null);
 
@@ -68,7 +72,7 @@ const EditSkills = ({value}: {value: string[] | undefined}) => {
 					/>
 					<br />
 					<div className="flex flex-wrap gap-5">
-						{skills.map((item, index) => (
+						{skills?.map((item, index) => (
 							<div
 								key={index}
 								className="bg-slate-300 px-4 py-1 rounded-md cursor-pointer relative group hover:bg-red-500 transition-all ease-in-out">
@@ -76,6 +80,7 @@ const EditSkills = ({value}: {value: string[] | undefined}) => {
 									className="absolute left-0 right-0 grid place-content-center z-[-10] group-hover:z-[10] transition-all  ease-in-out"
 									onClick={(e) => {
 										e.preventDefault();
+										value?.filter((prev, ind) => ind !== index);
 										setSkills((prev) => prev.filter((_, idx) => idx !== index));
 									}}>
 									<Trash size={20} className="text-slate-50" />
@@ -93,7 +98,10 @@ const EditSkills = ({value}: {value: string[] | undefined}) => {
 							Save changes
 							{isPending && <Loader2 className="ml-3 animate-spin" />}
 						</Button>
-						<DialogClose ref={dialogRef} asChild>
+						<DialogClose
+							ref={dialogRef}
+							asChild
+							onClick={() => setSkills(value!)}>
 							<Button variant="outline" type="button">
 								Cancel changes
 							</Button>

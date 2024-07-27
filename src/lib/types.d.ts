@@ -37,6 +37,7 @@ export type UserType = {
 	experience: ExperienceType[];
 	job_preferences: string[];
 	projects: ProjectsType[];
+	references: {link_name: string; link_path: string}[];
 };
 
 export type JobType = {
@@ -57,7 +58,9 @@ export type JobType = {
 		applied_on: number;
 		status: string;
 	}[];
+	applications_start_date: string;
 	applications_end_date: string;
+	duration: number;
 	createdOn: number;
 };
 

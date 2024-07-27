@@ -1,4 +1,5 @@
 import {ChatServiceInstance} from "@/lib/axios";
+import {delay} from "@/utils/delay";
 
 export const getChatLists = async (id: string) => {
 	const {data}: {data: {chatList: {user_id: string; chat_list: string[]}}} =
@@ -16,10 +17,14 @@ type ChatType = {
 };
 
 export const getChat = async (query: any) => {
-	const {data}: {data: {chats:ChatType}} = await ChatServiceInstance.get(
-		"/get-chats/" + query
+	const {pageParam, queryKey}: {pageParam: number; queryKey: string[]} = query;
+
+	const {data} = await ChatServiceInstance.get(
+		`/get-chats/${queryKey[1]}?_page=${pageParam}`
 	);
-	return data.chats;
+	await delay(2000);
+
+	return data;
 };
 
 export const addToChatList = async (values: {

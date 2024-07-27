@@ -12,7 +12,7 @@ import {fetchUser} from "@/controllers/userController";
 import {useQuery} from "@tanstack/react-query";
 import {Download, Pen, Trash2, Upload} from "lucide-react";
 import Image from "next/image";
-import {useEffect, useRef} from "react";
+import {useEffect} from "react";
 import {useParams, useRouter} from "next/navigation";
 import EditProfile from "@/components/ui/forms/edit-profile";
 import ToolTipWrapper from "@/components/wrapper/tool-tip-wrapper";
@@ -24,6 +24,9 @@ import EducationForm from "@/components/ui/forms/education-form";
 import ExperienceForm from "@/components/ui/forms/experience-form";
 import ProjectsForm from "@/components/ui/forms/projects-form";
 import {useUserStore} from "@/store/userStore";
+import Loader from "@/components/ui/loaders/loader";
+import Link from "next/link";
+import EditAvatar from "@/components/ui/forms/edit-avatar-image";
 
 export default function Account() {
 	const {id}: {id: string} = useParams();
@@ -31,9 +34,7 @@ export default function Account() {
 	const user = useUserStore((state) => state.userData);
 	const setUser = useUserStore((state) => state.updateUserData);
 
-	const fileRef = useRef<HTMLInputElement>(null);
-
-	const {data, error, status, isPending, isSuccess} = useQuery({
+	const {data, error, status, isError, isPending, isSuccess} = useQuery({
 		queryKey: ["user", id],
 		queryFn: () => fetchUser(id),
 	});
@@ -44,12 +45,27 @@ export default function Account() {
 		}
 	}, [status, data]);
 
-	const handleClick = () => {
-		fileRef.current?.click();
-	};
-
 	if (isPending) {
-		return <div>loading..</div>;
+		return (
+			<div>
+				<Loader />
+			</div>
+		);
+	}
+
+	if (status === "error") {
+		return (
+			<div className="text-center py-20">
+				<h1 className="font-semibold text-2xl mb-5">setup your account</h1>
+				<p className="font-medium text-slate-700 mb-3">
+					You have not completed your account setup process. Please complete
+					that so you can apply for jobs
+				</p>
+				<Link href={"/account-setup"} className="font-semibold hover:underline">
+					Go
+				</Link>
+			</div>
+		);
 	}
 
 	if (isSuccess)
@@ -57,7 +73,7 @@ export default function Account() {
 			<div className="w-full h-full flex items-center justify-center sm:py-5">
 				<SectionWrapper>
 					<div className="w-full h-auto flex sm:flex-col gap-5 items-center py-10 sm:py-0">
-						<div className="w-[40%] sm:w-[100%] h-full bg-slate-50 dark:bg-slate-900 border border-slate-400 border-opacity-20 rounded-xl p-8 flex items-center flex-col gap-5 justify-evenly">
+						<div className="w-[40%] sm:w-[100%] h-full bg-slate-50 dark:bg-slate-900 border border-slate-400 border-opacity-20 rounded-xl p-8 flex items-center flex-col gap-10 justify-evenly">
 							<div className="relative">
 								<Image
 									src={"/icons/Default_pfp.svg.png"}
@@ -66,12 +82,11 @@ export default function Account() {
 									alt="avatar"
 									priority
 								/>
-								<div
-									onClick={handleClick}
-									className="absolute size-7 bottom-1 right-4 bg-purple-600 rounded-full grid place-content-center">
-									<Pen className="size-4 text-slate-100 cursor-pointer" />
+								<div className="absolute size-7 bottom-1 right-4 bg-purple-600 rounded-full grid place-content-center">
+									<ToolTipWrapper content="change your profile picture">
+										<EditAvatar />
+									</ToolTipWrapper>
 								</div>
-								<input type="file" hidden ref={fileRef} />
 							</div>
 							<div className="relative text-center">
 								<h1 className="font-semibold text-xl tracking-widest">
@@ -84,7 +99,7 @@ export default function Account() {
 								<ToolTipWrapper content="Edit profile">
 									<div className="absolute -top-3 -right-4">
 										<EditProfile
-											defaultValues={{
+											values={{
 												fname: user?.fname,
 												lname: user?.lname,
 												profession: user?.profession,
@@ -93,19 +108,23 @@ export default function Account() {
 									</div>
 								</ToolTipWrapper>
 							</div>
-							<div className="relative text-center">
-								<ToolTipWrapper content="Edit about">
-									<div className="absolute -top-3 -right-5">
-										<EditAbout about={user?.about} />
-									</div>
-								</ToolTipWrapper>
-								<h2 className="font-semibold text-xl">About</h2>
-								<p className="text-slate-600 text-center">{user?.about}</p>
+							<div className="text-center">
+								<div className="relative w-fit mx-auto">
+									<ToolTipWrapper content="Edit about">
+										<div className="absolute -top-4 -right-5">
+											<EditAbout about={user?.about} />
+										</div>
+									</ToolTipWrapper>
+									<h2 className="font-semibold text-xl">About</h2>
+								</div>
+								<p className="text-slate-600 text-center max-w-[350px]">
+									{user?.about}
+								</p>
 							</div>
 							<div className="space-y-2 text-center">
-								<div className="relative">
+								<div className="relative w-fit mx-auto">
 									<ToolTipWrapper content="Edit skills">
-										<div className="absolute -top-3 right-[70px]">
+										<div className="absolute -top-3 -right-5">
 											<EditSkills value={user?.skills} />
 										</div>
 									</ToolTipWrapper>
@@ -122,9 +141,9 @@ export default function Account() {
 								</div>
 							</div>
 							<div className="space-y-2 text-center">
-								<div className="relative">
+								<div className="relative w-fit mx-auto">
 									<ToolTipWrapper content="Edit skills">
-										<div className="absolute -top-3 right-[50px]">
+										<div className="absolute -top-3 -right-4">
 											<EditPreferences value={user?.job_preferences} />
 										</div>
 									</ToolTipWrapper>
@@ -194,32 +213,38 @@ export default function Account() {
 										</AccordionTrigger>
 										<AccordionContent>
 											<ul className="space-y-4">
-												{user?.education.map((item, index) => (
-													<li
-														key={index}
-														className="border-b border-slate-300 dark:border-slate-700 p-2 last:border-none space-y-3">
-														<div className="flex justify-end gap-5">
-															<ToolTipWrapper content="edit education">
-																<EducationForm method="UPDATE" education={item}>
-																	<Pen className="size-4 text-purple-500 cursor-pointer" />
-																</EducationForm>
-															</ToolTipWrapper>
-															<ToolTipWrapper content="remove">
-																<Trash2 className="size-5 text-red-500 cursor-pointer" />
-															</ToolTipWrapper>
-														</div>
-														<h1 className="font-bold text-blue-600 text-lg">
-															{item.institute}
-														</h1>
-														<h2 className="font-semibold text-base">
-															{item.education_type} in {item.stream}
-														</h2>
-														<p className="text-slate-600">
-															{item.start_date} - {item.end_date}
-														</p>
-														<p className="text-slate-600">{item.marks}%</p>
-													</li>
-												))}
+												{user?.education.map((item, index) =>
+													item.institute === "" ? (
+														"no data found"
+													) : (
+														<li
+															key={index}
+															className="border-b border-slate-300 dark:border-slate-700 p-2 last:border-none space-y-3">
+															<div className="flex justify-end gap-5">
+																<ToolTipWrapper content="edit">
+																	<EducationForm
+																		method="UPDATE"
+																		education={item}>
+																		<Pen className="size-4 text-purple-500 cursor-pointer" />
+																	</EducationForm>
+																</ToolTipWrapper>
+																<ToolTipWrapper content="remove">
+																	<Trash2 className="size-5 text-red-500 cursor-pointer" />
+																</ToolTipWrapper>
+															</div>
+															<h1 className="font-bold text-blue-600 text-lg">
+																{item.institute}
+															</h1>
+															<h2 className="font-semibold text-base">
+																{item.education_type} in {item.stream}
+															</h2>
+															<p className="text-slate-600">
+																{item.start_date} - {item.end_date}
+															</p>
+															<p className="text-slate-600">{item.marks}%</p>
+														</li>
+													)
+												)}
 											</ul>
 											<br />
 											<EducationForm
@@ -249,26 +274,38 @@ export default function Account() {
 										</AccordionTrigger>
 										<AccordionContent>
 											<ul className="space-y-4">
-												{user?.experience.map((item, index) => (
-													<li
-														key={index}
-														className="border-b border-slate-300 dark:border-slate-700 p-2 last:border-none space-y-3">
-														<ToolTipWrapper content="edit education">
-															<ExperienceForm method="UPDATE" experience={item}>
-																<Pen className="size-4 text-purple-500 cursor-pointer" />
-															</ExperienceForm>
-														</ToolTipWrapper>
-														<h1 className="font-bold text-blue-600 text-lg">
-															{item.company_name}
-														</h1>
-														<h2 className="font-semibold text-base">
-															{item.position}
-														</h2>
-														<p className="text-slate-600">
-															{item.start_date} - {item.end_date}
-														</p>
-													</li>
-												))}
+												{user?.experience.map((item, index) =>
+													item.company_name === "" ? (
+														"no data found"
+													) : (
+														<li
+															key={index}
+															className="border-b border-slate-300 dark:border-slate-700 p-2 last:border-none space-y-3">
+															<div className="flex justify-end gap-5">
+																<ToolTipWrapper content="edit">
+																	<ExperienceForm
+																		method="UPDATE"
+																		experience={item}>
+																		<Pen className="size-4 text-purple-500 cursor-pointer" />
+																	</ExperienceForm>
+																</ToolTipWrapper>
+
+																<ToolTipWrapper content="remove">
+																	<Trash2 className="size-5 text-red-500 cursor-pointer" />
+																</ToolTipWrapper>
+															</div>
+															<h1 className="font-bold text-blue-600 text-lg">
+																{item.company_name}
+															</h1>
+															<h2 className="font-semibold text-base">
+																{item.position}
+															</h2>
+															<p className="text-slate-600">
+																{item.start_date} - {item.end_date}
+															</p>
+														</li>
+													)
+												)}
 											</ul>
 											<br />
 											<ExperienceForm
@@ -296,32 +333,36 @@ export default function Account() {
 										</AccordionTrigger>
 										<AccordionContent>
 											<ul className="space-y-4">
-												{user?.projects.map((item, index) => (
-													<li
-														key={index}
-														className="border-b border-slate-300 dark:border-slate-700 p-2 last:border-none space-y-3">
-														<ToolTipWrapper content="edit education">
-															<ProjectsForm method="UPDATE" projects={item}>
-																<Pen className="size-4 text-purple-500 cursor-pointer" />
-															</ProjectsForm>
-														</ToolTipWrapper>
-														<h1 className="font-bold text-blue-600 text-lg">
-															{item.project_name}
-														</h1>
-														<p className="font-normal text-base">
-															{item.project_description}
-														</p>
-														<div className="flex flex-wrap gap-5">
-															{item.technologies_used.map((tech) => (
-																<p
-																	key={tech}
-																	className="bg-slate-500 px-2 rounded-lg">
-																	{tech}
-																</p>
-															))}
-														</div>
-													</li>
-												))}
+												{user?.projects.map((item, index) =>
+													item.project_name === "" ? (
+														"no data found"
+													) : (
+														<li
+															key={index}
+															className="border-b border-slate-300 dark:border-slate-700 p-2 last:border-none space-y-3">
+															<ToolTipWrapper content="edit education">
+																<ProjectsForm method="UPDATE" projects={item}>
+																	<Pen className="size-4 text-purple-500 cursor-pointer" />
+																</ProjectsForm>
+															</ToolTipWrapper>
+															<h1 className="font-bold text-blue-600 text-lg">
+																{item.project_name}
+															</h1>
+															<p className="font-normal text-base">
+																{item.project_description}
+															</p>
+															<div className="flex flex-wrap gap-5">
+																{item.technologies_used.map((tech) => (
+																	<p
+																		key={tech}
+																		className="bg-slate-500 px-2 rounded-lg">
+																		{tech}
+																	</p>
+																))}
+															</div>
+														</li>
+													)
+												)}
 											</ul>
 											<br />
 											<ProjectsForm

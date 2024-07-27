@@ -33,6 +33,16 @@ export const createUser = async (userInputs: UserInputType) => {
 	return data;
 };
 
+export const userJobs = async (id: string) => {
+	const {data} = await UserServiceInstance.get("/user-jobs/" + id);
+	return data;
+};
+
+export const getAppliedJobs = async (id: string) => {
+	const {data} = await UserServiceInstance.get("/get-applied-jobs/" + id);
+	return data;
+};
+
 export const fetchUser = async (user_id: string | undefined) => {
 	const {data}: {data: {user: UserType}} = await UserServiceInstance.get(
 		`/get-user/${user_id}`
@@ -240,29 +250,30 @@ export const fetchSavedJobs = async (id: string | undefined) => {
 };
 
 export const saveJob = async (ids: {job_id: string; user_id: string}) => {
-	const {data} = await UserServiceInstance.post(
-		"/save-job",
-		ids,
-		{
-			headers: {
-				"Content-Type": "application/json",
-			},
-		}
-	);
+	const {data} = await UserServiceInstance.post("/save-job", ids, {
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
 
 	return data;
 };
 
 export const removeSaved = async (ids: {job_id: string; user_id: string}) => {
-	const {data} = await UserServiceInstance.patch(
-		"/unsave",
-		ids,
-		{
-			headers: {
-				"Content-Type": "application/json",
-			},
-		}
-	);
+	const {data} = await UserServiceInstance.patch("/unsave", ids, {
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
 
 	return data;
+};
+
+export const updateAvatar = async (img: File | null | undefined) => {
+	const {data} = await UserServiceInstance.post("/update-avatar", img,{
+		headers:{
+			"Content-Type":"multipart/form-data"
+		}
+	});
+	return data
 };

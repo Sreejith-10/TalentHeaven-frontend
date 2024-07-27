@@ -15,21 +15,27 @@ import {
 	PaginationPrevious,
 } from "@/components/ui/pagination";
 import SectionWrapper from "@/components/wrapper/section-wrapper";
-import {X} from "lucide-react";
+import {AlertTriangle, X} from "lucide-react";
 import {motion} from "framer-motion";
 import {useEffect, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {getJob, searchJob} from "@/controllers/jobController";
 import {JobType} from "@/lib/types";
-import {useSearchParams} from "next/navigation";
-import {useRouter} from "next/navigation";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 export default function Search() {
-	const params = useSearchParams();
 	const url = new URL(window.location.href);
 	const search = new URLSearchParams(url.search);
 
 	const [showFilter, setShowFilter] = useState(false);
+	const [sortState, setSortState] = useState("");
+
 	const [filters, setFilters] = useState<{
 		job_type: [] | string[];
 		job_mode: [] | string[];
@@ -87,7 +93,7 @@ export default function Search() {
 						<SerachBar />
 					</section>
 					<div className="w-full h-auto flex gap-5 py-[90px] px-[200px] sm:py-[30px]">
-						<div className="w-[40%] lg:w-[25%] p-5 space-y-4 sm:hidden">
+						<div className="w-[30%] lg:w-[25%] p-5 space-y-4 sm:hidden">
 							<div>
 								<h2 className="font-semibold up">Filter</h2>
 							</div>
@@ -292,10 +298,26 @@ export default function Search() {
 							</div>
 							<br />
 						</div>
-						<div className="w-[60%] xs:w-full lg:w-[75%] h-full p-5 space-y-5 flex flex-col">
+						<div className="w-[70%] xs:w-full lg:w-[75%] h-full p-5 space-y-5 flex flex-col">
 							<div className="w-full flex justify-between">
-								<h2 className="font-semibold">121 jobs</h2>
-								<div>Sort by Newest</div>
+								<h2 className="font-semibold">
+									{isLoading
+										? "Please wait"
+										: isError
+										? "Failed"
+										: `${data?.length} jobs`}
+								</h2>
+								<div>
+									<Select onValueChange={(val) => setSortState(val)}>
+										<SelectTrigger>
+											<SelectValue placeholder="Sort" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="order">Sort by order</SelectItem>
+											<SelectItem value="date">Sort by date</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
 							</div>
 							<Button
 								onClick={() => setShowFilter(true)}
@@ -306,9 +328,16 @@ export default function Search() {
 								{isLoading ? (
 									<div>loading . . .</div>
 								) : isError ? (
-									<div>
-										<h1>Error</h1>
-										<Button onClick={() => refetch()}>Try again</Button>
+									<div className="flex items-center justify-center flex-col gap-5">
+										<AlertTriangle className="size-20 text-purple-500" />
+										<h1 className="font-semibold text-slate-700">
+											something went wrong
+										</h1>
+										<span
+											onClick={() => refetch()}
+											className="bg-purple-500 px-8 py-2 text-slate-50 rounded-md shadow-xl cursor-pointer hover:bg-purple-400 active:shadow-none select-none">
+											retry
+										</span>
 									</div>
 								) : (
 									data?.map((data, index) => (

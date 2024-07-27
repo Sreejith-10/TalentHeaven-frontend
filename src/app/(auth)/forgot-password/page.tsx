@@ -17,6 +17,7 @@ export default function ForgotPassword() {
 		mutationFn: sendMail,
 		onError: (err) => {
 			const error = err as AxiosError<{message: string}>;
+			console.log(error);
 			toast({
 				title: "Error",
 				description: error?.response?.data?.message,
@@ -28,7 +29,8 @@ export default function ForgotPassword() {
 				title: "Success",
 				description: "otp has send to mail",
 			});
-			push("/otp/" + res.data.user_id);
+			console.log(res);
+			push("/otp/" + res.user_id);
 		},
 	});
 

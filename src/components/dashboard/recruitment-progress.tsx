@@ -11,7 +11,7 @@ import { EllipsisVertical } from "lucide-react";
 
 const RecruitmentProgress = () => {
 	return (
-		<div className="w-1/2 bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 h-full rounded-2xl">
+		<div className="w-full bg-slate-50 dark:bg-slate-900 dark:border dark:border-slate-800 h-full rounded-2xl">
 			<div className="flex p-5 justify-between items-center">
 				<h1 className="font-semibold text-xl">Recuitment progress</h1>
 				<Link

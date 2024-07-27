@@ -1,5 +1,6 @@
 import {JobServiceInstance} from "@/lib/axios";
 import {JobType} from "@/lib/types";
+import {delay} from "@/utils/delay";
 
 export const searchJob = async (searchParams: any) => {
 	try {
@@ -37,11 +38,18 @@ export const getJob = async () => {
 	return data;
 };
 
-export const getJobById = async (id: any) => {
+export const getJobById = async ({queryKey}: {queryKey: string[]}) => {
 	const {data}: {data: {job: JobType}} = await JobServiceInstance.get(
-		"/get-job/" + id
+		"/get-job/" + queryKey[1]
 	);
 	return data.job;
+};
+
+export const getApplicationsByJobId = async (id: string) => {
+	const {data} = await JobServiceInstance.get(
+		"/get-applications-by-jobid/" + id
+	);
+	return data.applications;
 };
 
 export const getJobsByCompanyId = async (id: string) => {
@@ -51,11 +59,15 @@ export const getJobsByCompanyId = async (id: string) => {
 	return data.jobList;
 };
 
-export const applyForJob = async (ids: {job_id: string; user_id: string}) => {
-	const {job_id, user_id} = ids;
+export const applyForJob = async (ids: {
+	company_id: string;
+	job_id: string;
+	user_id: string;
+}) => {
+	const {company_id, job_id, user_id} = ids;
 	const {data} = await JobServiceInstance.post(
 		"/apply",
-		{job_id, user_id},
+		{company_id, job_id, user_id},
 		{
 			headers: {
 				"Content-Type": "application/json",
@@ -69,7 +81,7 @@ export const getAllApplications = async (id: string) => {
 	const {data}: {data: {applications: []}} = await JobServiceInstance(
 		"/get-all-applications/" + id
 	);
-	return data.applications.flat(1);
+	return data.applications;
 };
 
 export const rejectApplication = async (args: {
@@ -78,5 +90,18 @@ export const rejectApplication = async (args: {
 }) => {
 	const {job_id, user_id} = args;
 	const {data} = await JobServiceInstance.post("/reject", {job_id, user_id});
+	return data;
+};
+
+export const updateApplicationStatus = async ({
+	job_id,
+	user_id,
+	new_status,
+}: {
+	job_id: string;
+	user_id: string;
+	new_status: "viewed" | "applied" | "rejected" | "hired" | "interviewing";
+}) => {
+	const {data} = await JobServiceInstance.post("/update-application-status",{job_id,user_id,new_status});
 	return data;
 };

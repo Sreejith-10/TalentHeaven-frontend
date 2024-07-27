@@ -35,7 +35,11 @@ export const accountSchema = z.object({
     education:z.array(educationSchema).optional(),
     experience:z.array(experienceSchema).optional(),
     job_preferences:z.array(z.string()),
-    projects: z.array(projectSchema).optional()
+    projects: z.array(projectSchema).optional(),
+    references:z.array(z.object({
+        link_name:z.string(),
+        link_path:z.string()
+    }))
 })
 
 
