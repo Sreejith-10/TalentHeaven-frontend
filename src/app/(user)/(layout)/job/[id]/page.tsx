@@ -16,6 +16,7 @@ import {
 	saveJob,
 } from "@/controllers/userController";
 import {useUserStore} from "@/store/userStore";
+import {validateJobApplcation} from "@/utils/validateJobApplication";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {
@@ -25,16 +26,22 @@ import {
 	Calendar,
 	Clock,
 	Compass,
+	Share,
 } from "lucide-react";
 import Image from "next/image";
 import {useParams, useRouter} from "next/navigation";
-import {useEffect} from "react";
+import {useState} from "react";
 
 export default function Job() {
+	const [valid, setValid] = useState(false);
+	const [skillRequired, setSkillRequried] = useState<string[]>();
+
 	const {id}: {id: string} = useParams();
 	const {push} = useRouter();
-	const user = useUserStore((state) => state.userId);
 	const {toast} = useToast();
+
+	const user = useUserStore((state) => state.userId);
+	const userData = useUserStore((state) => state.userData);
 
 	const queryClient = useQueryClient();
 
@@ -88,6 +95,8 @@ export default function Job() {
 		},
 	});
 
+	console.log(userData);
+
 	const {mutate: unsave} = useMutation({
 		mutationFn: removeSaved,
 		onSuccess: (res) => {
@@ -101,7 +110,27 @@ export default function Job() {
 
 	const apply = () => {
 		if (user) {
-			mutate({company_id: company?.company_id!, job_id: id, user_id: user});
+			const valid = validateJobApplcation(userData!, job!);
+			if (valid.experience.match) {
+				setValid(false);
+			} else {
+				setValid(true);
+			}
+			if (!valid.skills.match) {
+				setSkillRequried(valid.skills.notIncludes);
+			} else {
+				setSkillRequried([]);
+			}
+
+			if (valid.experience.match && valid.skills.match) {
+				mutate({
+					company_id: company?.company_id!,
+					job_id: id,
+					user_id: user,
+					user_name: userData?.fname + " " + userData?.lname,
+					user_profile: userData?.profile_image ?? null,
+				});
+			}
 		} else {
 			push("/login");
 		}
@@ -162,11 +191,20 @@ export default function Job() {
 						<br />
 						<div className="space-y-4">
 							<h2 className="font-semibold text-lg">Skills:</h2>
+							{skillRequired?.length! > 0 && (
+								<p className="text-sm text-destructive">
+									some skills are missing in your profile
+								</p>
+							)}
 							<ul className="flex flex-wrap gap-5">
 								{job?.skill_rquired.map((req, index) => (
 									<li
 										key={index}
-										className="bg-slate-200 dark:bg-slate-500 text-slate-700 dark:text-slate-800 px-4 py-1 rounded-md w-fit">
+										className={`${
+											skillRequired?.includes(req)
+												? "bg-destructive text-slate-50"
+												: "bg-slate-200 dark:bg-slate-500 text-slate-700 dark:text-slate-800"
+										}  px-4 py-1 rounded-md w-fit`}>
 										{req}
 									</li>
 								))}
@@ -175,14 +213,36 @@ export default function Job() {
 						<br />
 						<div className="space-y-4">
 							<h2 className="font-semibold text-lg">Experience</h2>
-							<p className="bg-slate-200 dark:bg-slate-500 text-slate-700 dark:text-slate-800 px-4 py-1 rounded-md w-fit">
-								1 - 2 years
+							{valid && (
+								<p className="text-sm text-destructive">
+									experience do not match
+								</p>
+							)}
+							<p
+								className={`${
+									valid
+										? "bg-destructive text-slate-50"
+										: "bg-slate-200 dark:bg-slate-500 text-slate-700 dark:text-slate-800 "
+								} px-4 py-1 rounded-md w-fit`}>
+								{job?.experience}
 							</p>
 						</div>
 						<br />
 					</div>
 					<div className="w-[30%]">
-						<div className="w-full flex gap-5 mb-10">
+						<div className="w-full h-12 flex gap-5 mb-10">
+							<div
+								className="bg-blue-500 hover:bg-blue-400 text-slate-50 dark:bg-blue-500 dark:border-2 dark:border-slate-100 rounded-full w-1/2 font-semibold flex items-center justify-center gap-3 cursor-pointer"
+								onClick={() => {
+									navigator.share({
+										title: document.title,
+										text: "Job search from talent heaven",
+										url: window.location.href,
+									});
+								}}>
+								<Share />
+								Share
+							</div>
 							{saved?.saved_jobs?.includes(id) ? (
 								<div
 									onClick={() => {
@@ -202,14 +262,6 @@ export default function Job() {
 									Save
 								</div>
 							)}
-							<div className="rounded-full w-1/2 font-semibold flex items-center justify-center gap-3 cursor-pointer">
-								<Button
-									onClick={apply}
-									disabled={userStatus === "rejected"}
-									className="w-full h-full py-3 rounded-full bg-purple-600 hover:bg-purple-500 dark:text-slate-200">
-									{userStatus ? "Applied" : "Apply now"}
-								</Button>
-							</div>
 						</div>
 						<div className="w-full h-auto bg-slate-100 dark:bg-slate-900 dark:border-2 dark:border-slate-800 rounded-xl p-5">
 							<div className="w-full flex">
@@ -220,7 +272,7 @@ export default function Job() {
 									<h2 className="font-semibold text-lg dark:text-slate-300">
 										Salary
 									</h2>
-									<p className="">1 - 2 LPA</p>
+									<p className="">{job?.salary}</p>
 								</div>
 							</div>
 							<br />
@@ -232,7 +284,7 @@ export default function Job() {
 									<h2 className="font-semibold text-lg dark:text-slate-300">
 										Job mode
 									</h2>
-									<h3>Remote</h3>
+									<h3>{job?.job_mode}</h3>
 								</div>
 							</div>
 							<br />
@@ -244,7 +296,7 @@ export default function Job() {
 									<h2 className="font-semibold text-lg dark:text-slate-300">
 										Job type
 									</h2>
-									<h3>Full time</h3>
+									<h3>{job?.job_type}</h3>
 								</div>
 							</div>
 							{job?.job_type === "internship" && (
@@ -265,6 +317,21 @@ export default function Job() {
 							)}
 						</div>
 					</div>
+				</div>
+
+				<div className="w-auto px-10 mt-5 space-y-3">
+					<div className="w-fit font-semibold flex items-center justify-center gap-3 cursor-pointer">
+						<Button
+							onClick={apply}
+							disabled={userStatus === "rejected"}
+							className="w-56 h-full py-2  bg-purple-600 hover:bg-purple-500 dark:text-slate-200">
+							{userStatus ? "Applied" : "Apply now"}
+						</Button>
+					</div>
+					<p className="font-semibold text-slate-500 text-sm">
+						*please read the job description and requirements and if it matches
+						your profile then apply
+					</p>
 				</div>
 
 				<div className="mt-10">

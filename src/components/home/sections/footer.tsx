@@ -134,9 +134,11 @@ const Footer = () => {
 
 					<div className="w-full flex justify-between items-center sm:flex-col sm:gap-5">
 						<div className="flex items-center gap-2">
-							<Copyright /> 2024{" "}
-							<span className="font-semibold">TalentHeaven</span>, All rights
-							reserved
+							<span className="flex items-center gap-3">
+								<Copyright /> 2024{" "}
+							</span>
+							<span className="font-semibold">TalentHeaven</span>
+							<p>, All rights reserved</p>
 						</div>
 						<div className="flex gap-5">
 							<Facebook />

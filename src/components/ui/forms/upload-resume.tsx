@@ -1,6 +1,6 @@
 "use client";
 
-import {Pen, X} from "lucide-react";
+import {Pen, Upload, X} from "lucide-react";
 import {
 	Dialog,
 	DialogContent,
@@ -13,10 +13,8 @@ import {
 import {Button} from "../button";
 import {useEffect, useRef, useState} from "react";
 import Image from "next/image";
-import {useMutation} from "@tanstack/react-query";
-import {updateAvatar} from "@/controllers/userController";
 
-const EditAvatar = () => {
+const UploadResume = () => {
 	const [fileState, setFileState] = useState<File | null>();
 	const [selectedFile, setSelectedFile] = useState<string | undefined>();
 
@@ -33,29 +31,23 @@ const EditAvatar = () => {
 		getImage();
 	}, [fileState]);
 
-	const {mutate} = useMutation({
-		mutationFn: updateAvatar,
-	});
-
 	const submitAvatar = () => {
 		const formData = new FormData();
-
-		if (fileState) {
-			formData.append("avatar", fileState);
-			mutate(formData);
-		}
 	};
 
 	return (
 		<Dialog>
 			<DialogTrigger>
-				<Pen className="size-4 text-slate-100 cursor-pointer" />
+				<Button className="space-x-2">
+					<Upload />
+					<span>Upload Resume</span>
+				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Edit Avatar</DialogTitle>
+					<DialogTitle>Resume</DialogTitle>
 					<DialogDescription>
-						Make chages to you profile, ensure to save the changes
+						upload your new resume, ensure to save the changes
 					</DialogDescription>
 				</DialogHeader>
 				<div>
@@ -82,7 +74,7 @@ const EditAvatar = () => {
 							className="w-full h-[300px] border-8 border-dashed border-slate-300 rounded-2xl grid place-content-center"
 							onClick={() => fileRef.current?.click()}>
 							<p className="font-semibold text-slate-700 hover:underline cursor-pointer">
-								Select an image from your device
+								Select an file from your device
 							</p>
 							<input
 								type="file"
@@ -109,4 +101,4 @@ const EditAvatar = () => {
 	);
 };
 
-export default EditAvatar;
+export default UploadResume;

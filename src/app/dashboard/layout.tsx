@@ -16,7 +16,7 @@ export default function RecruiterLayout({
 	return (
 		<ProtectedRoute>
 			<div className="w-ful h-dvh flex">
-				<div className="w-[20%]">
+				<div className="w-[20%] h-full">
 					<SideBar />
 				</div>
 				<div className="w-[80%] h-full">{main}</div>

@@ -88,6 +88,10 @@ body {
 	transition-duration: 500ms;
 }
 
+br {
+	user-select: none;
+}
+
 .page-transistion {
 	opacity: 0;
 	background: #a855f7;
@@ -118,7 +122,7 @@ body {
 	}
 }
 
-@layer components {
+@layer utilities {
 	.box-shadow {
 		box-shadow: 0px 0px 20px 0px #0000002e;
 	}

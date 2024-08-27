@@ -7,7 +7,7 @@ import {motion} from "framer-motion";
 
 export default function RegisterSection() {
 	return (
-		<section className="w-full h-auto py-20 bg-purple-600/20 dark:bg-slate-900">
+		<section className="w-full h-auto py-20 bg-purple-600/20 dark:bg-slate-900/30">
 			<SectionWrapper>
 				<div className="w-full flex flex-col gap-[70px] items-center justify-center">
 					<div className="text-center">

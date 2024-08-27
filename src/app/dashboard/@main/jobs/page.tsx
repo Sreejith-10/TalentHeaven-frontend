@@ -231,7 +231,7 @@ export default function Jobs() {
 					</div>
 					<div>
 						{data ? (
-							<ReactTable data={data} columns={columns} />
+							<ReactTable data={data} columns={columns} page={10} />
 						) : (
 							<h1>Loading .. . </h1>
 						)}

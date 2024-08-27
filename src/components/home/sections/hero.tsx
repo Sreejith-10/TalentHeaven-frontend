@@ -6,16 +6,16 @@ const Hero = () => {
 		<section className="w-full h-auto py-[200px] flex justify-center relative">
 			{/* <div className="w-[300px] h-[360px] sm:w-[200px] sm:h-[150px] bg-purple-600 dark:bg-purple-950 blur-3xl absolute top-[30%] left-[20%] md:top-[10%] -z-10 bb"></div> */}
 
-			<div className="absolute top-[30%] left-[10%] -z-50">
+			<div className="absolute top-[30%] left-[10%] -z-50 sm:hidden">
 				<div className="w-[300px] h-[300px] bg-purple-600 bb blur-lg opacity-80 dark:blur-md absolute top-1/2 animate-blob"></div>
 				<div className="w-[300px] h-[300px] bg-purple-500 bb blur-lg opacity-80 dark:blur-md absolute bottom-[-70px] left-[150px] animate-blob [animation-delay:5s]"></div>
 				<div className="w-[300px] h-[300px] bg-purple-400 bb blur-lg opacity-80 dark:blur-md absolute left-[240px] animate-blob [animation-delay:10s]"></div>
 			</div>
 
-			<div className="absolute top-[50%] left-[60%] -z-50">
-				<div className="w-[300px] h-[300px] bg-purple-500 bb blur-lg opacity-80 dark:blur-md absolute left-[240px] animate-blob [animation-delay:10s]"></div>
-				<div className="w-[300px] h-[300px] bg-purple-400 bb blur-lg opacity-80 dark:blur-md absolute top-1/2 animate-blob"></div>
-				<div className="w-[300px] h-[300px] bg-purple-600 bb blur-lg opacity-80 dark:blur-md absolute bottom-[-70px] left-[150px] animate-blob [animation-delay:5s]"></div>
+			<div className="absolute top-[50%] left-[60%] -z-50 sm:-left-14 sm:top-24">
+				<div className="w-[300px] h-[300px] sm:w-[200px] sm:h-[200px] bg-purple-500 bb blur-lg opacity-80 dark:blur-md absolute left-[240px] animate-blob [animation-delay:10s]"></div>
+				<div className="w-[300px] h-[300px] sm:w-[200px] sm:h-[200px] bg-purple-400 bb blur-lg opacity-80 dark:blur-md absolute top-1/2 sm:left-20 animate-blob"></div>
+				<div className="w-[300px] h-[300px] sm:w-[200px] sm:h-[200px] bg-purple-600 bb blur-lg opacity-80 dark:blur-md absolute bottom-[-70px] left-[150px] animate-blob [animation-delay:5s]"></div>
 			</div>
 
 			<SectionWrapper>

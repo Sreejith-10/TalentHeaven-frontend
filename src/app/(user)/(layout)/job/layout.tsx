@@ -10,5 +10,5 @@ export default function JobLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	return <div>{children}</div>;
+	return <div className="w-full h-full relative">{children}</div>;
 }

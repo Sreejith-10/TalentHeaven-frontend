@@ -179,6 +179,23 @@ const config = {
 						"background-position": "100% 50%",
 					},
 				},
+				shake: {
+					"0%": {
+						transform: "translateX(10%)",
+					},
+					"20%": {
+						transform: "translateX(-10%)",
+					},
+					"50%": {
+						transform: "translateX(10%)",
+					},
+					"70%": {
+						transform: "translateX(-10%)",
+					},
+					"100%": {
+						transform: "translateX(0%)",
+					},
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -192,7 +209,8 @@ const config = {
 				"slide-rin": "slide-rin .4s ease-in-out",
 				grow: "grow 1.2s linear infinite",
 				"grow-slow": "grow -0.5s linear infinite",
-				"gradient-x" : "gradient-x .5s ease-in-out infinite"
+				"gradient-x": "gradient-x .5s ease-in-out infinite",
+				shake: "shake .5s ease-in-out",
 			},
 		},
 	},

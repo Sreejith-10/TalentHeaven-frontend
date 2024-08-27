@@ -19,6 +19,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {useToast} from "@/components/ui/use-toast";
 import {companyCategories} from "@/constants/company";
 import {createJob} from "@/controllers/jobController";
 import {jobScehma} from "@/schemas/job-scehma";
@@ -31,6 +32,8 @@ import {useForm} from "react-hook-form";
 import * as z from "zod";
 
 export default function CreateJob() {
+	const {toast} = useToast();
+
 	const id = useRecruiterStore((state) => state.companyId);
 	const [skills, setSkills] = useState<string[] | []>([]);
 	const [requirements, setRequirements] = useState<string[] | []>([]);
@@ -59,9 +62,19 @@ export default function CreateJob() {
 		mutationFn: createJob,
 		onSuccess: (res) => {
 			console.log(res);
+			toast({
+				title: "success",
+				description: "new job posted",
+				variant: "success",
+			});
 		},
 		onError: (err) => {
 			console.log(err);
+			toast({
+				title: "error",
+				description: "something went wrong",
+				variant: "error",
+			});
 		},
 	});
 

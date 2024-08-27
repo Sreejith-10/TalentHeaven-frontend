@@ -10,7 +10,7 @@ import {Button} from "@/components/ui/button";
 import SectionWrapper from "@/components/wrapper/section-wrapper";
 import {fetchUser} from "@/controllers/userController";
 import {useQuery} from "@tanstack/react-query";
-import {Download, Pen, Trash2, Upload} from "lucide-react";
+import {Pen, Trash2} from "lucide-react";
 import Image from "next/image";
 import {useEffect} from "react";
 import {useParams, useRouter} from "next/navigation";
@@ -27,6 +27,8 @@ import {useUserStore} from "@/store/userStore";
 import Loader from "@/components/ui/loaders/loader";
 import Link from "next/link";
 import EditAvatar from "@/components/ui/forms/edit-avatar-image";
+import Resume from "@/components/ui/resume";
+import UploadResume from "@/components/ui/forms/upload-resume";
 
 export default function Account() {
 	const {id}: {id: string} = useParams();
@@ -37,6 +39,7 @@ export default function Account() {
 	const {data, error, status, isError, isPending, isSuccess} = useQuery({
 		queryKey: ["user", id],
 		queryFn: () => fetchUser(id),
+		enabled: !Boolean(user),
 	});
 
 	useEffect(() => {
@@ -193,15 +196,8 @@ export default function Account() {
 									</div>
 								</div>
 								<div className="space-x-8 lg:flex sm:flex-col sm:gap-5 sm:items-start sm:flex-nowrap sm:space-x-0">
-									<Button className="space-x-2">
-										<Download />
-										<span>Download Resume</span>
-									</Button>
-
-									<Button className="space-x-2">
-										<Upload />
-										<span>Upload Resume</span>
-									</Button>
+									<Resume />
+									<UploadResume />
 								</div>
 							</div>
 

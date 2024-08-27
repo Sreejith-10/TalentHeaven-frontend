@@ -269,11 +269,13 @@ export const removeSaved = async (ids: {job_id: string; user_id: string}) => {
 	return data;
 };
 
-export const updateAvatar = async (img: File | null | undefined) => {
-	const {data} = await UserServiceInstance.post("/update-avatar", img,{
-		headers:{
-			"Content-Type":"multipart/form-data"
-		}
-	});
-	return data
+export const updateAvatar = async (formData: FormData) => {
+	const avatar = formData.get("avatar");
+	console.log(avatar);
+	const {data} = await UserServiceInstance.post(
+		"/update-avatar",
+		{avatar},
+		{headers: {"Content-Type": "application/json"}}
+	);
+	return data;
 };

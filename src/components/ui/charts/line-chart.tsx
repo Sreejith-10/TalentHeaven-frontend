@@ -35,7 +35,7 @@ const chartConfig = {
 
 export function LineChartLinear() {
 	return (
-		<Card className="w-full h-full rounded-3xl">
+		<Card className="rounded-3xl w-full h-full flex flex-col">
 			<CardHeader>
 				<CardTitle>Hiring</CardTitle>
 				<CardDescription>January - June 2024</CardDescription>
@@ -71,7 +71,7 @@ export function LineChartLinear() {
 					</LineChart>
 				</ChartContainer>
 			</CardContent>
-			<CardFooter className="flex-col items-start gap-2 text-sm">
+			<CardFooter className="flex-col items-start gap-2 mt-5 text-sm">
 				<div className="flex gap-2 font-medium leading-none">
 					2 hirings this month <TrendingUp className="h-4 w-4" />
 				</div>

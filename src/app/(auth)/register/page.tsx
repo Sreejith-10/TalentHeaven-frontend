@@ -52,7 +52,7 @@ export default function Register() {
 			if (err.message === "Network Error") {
 				toast({
 					title: "Bad network",
-					description: "network is bad or slow",
+					description: "no network connection",
 					variant: "info",
 				});
 			} else {

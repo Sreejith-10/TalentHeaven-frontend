@@ -38,6 +38,7 @@ export type UserType = {
 	job_preferences: string[];
 	projects: ProjectsType[];
 	references: {link_name: string; link_path: string}[];
+	profile_image:string
 };
 
 export type JobType = {

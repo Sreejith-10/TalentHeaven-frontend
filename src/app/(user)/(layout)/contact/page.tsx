@@ -9,9 +9,9 @@ export default function Contact() {
 		<div className="w-full">
 			<SectionWrapper>
 				<div className="w-full h-fit py-[100px] grid place-content-center">
-					<div className="w-[1200px] h-[600px] bg-slate-100 dark:bg-slate-900 shadow-xl dark:shadow-lg flex items-center relative before:content-[''] before:absolute before:w-[250px] before:h-[600px] before:bg-purple-500 before:right-0">
-						<div className="w-[60%] h-full px-[100px] py-5 space-y-5">
-							<h1 className="text-[80px] font-semibold dark:text-slate-100">
+					<div className="w-[1200px] h-[600px] sm:w-[350px] sm:h-fit bg-slate-100 dark:bg-slate-900 shadow-xl dark:shadow-lg flex items-center relative before:content-[''] before:absolute before:w-[250px] before:h-[600px] before:bg-purple-500 before:right-0 sm:before:hidden">
+						<div className="w-[60%] sm:w-full h-full px-[100px] sm:p-5 py-5 space-y-5">
+							<h1 className="text-[80px] sm:text-sm font-semibold dark:text-slate-100">
 								Contact us
 							</h1>
 							<p className="text-slate-600">
@@ -27,7 +27,7 @@ export default function Contact() {
 								SEND
 							</Button>
 						</div>
-						<div className="w-[40%] h-[80%] z-50 bg-slate-950 p-12 relative flex flex-col justify-evenly before:content-[''] before:absolute before:w-[50px] before:h-[50px] before:bg-purple-500 before:top-[-10px] before:left-[-10px] text-slate-100">
+						<div className="w-[40%] h-[80%] sm:hidden z-50 bg-slate-950 p-12 relative flex flex-col justify-evenly before:content-[''] before:absolute before:w-[50px] before:h-[50px] before:bg-purple-500 before:top-[-10px] before:left-[-10px] text-slate-100">
 							<h2 className="text-xl">Info</h2>
 							<span className="flex items-center gap-5">
 								<Mail /> <p>123@gmail.com</p>

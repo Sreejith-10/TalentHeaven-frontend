@@ -8,7 +8,7 @@ import SlideWrapper from "@/components/wrapper/slide-wrapper";
 
 export default function Home() {
 	return (
-		<>
+		<div>
 			<SlideWrapper>
 				<Hero />
 			</SlideWrapper>
@@ -25,6 +25,6 @@ export default function Home() {
 			<SlideWrapper>
 				<GetStarted />
 			</SlideWrapper>
-		</>
+		</div>
 	);
 }

@@ -1,6 +1,7 @@
 import {JobServiceInstance} from "@/lib/axios";
 import {JobType} from "@/lib/types";
-import {delay} from "@/utils/delay";
+import Cookies from "js-cookie";
+import {jwtDecode} from "jwt-decode";
 
 export const searchJob = async (searchParams: any) => {
 	try {
@@ -29,7 +30,13 @@ export const createJob = async (inputs: {values: any; id: any}) => {
 };
 
 export const fetchRecentJobs = async () => {
-	const {data} = await JobServiceInstance.get("/recent-jobs");
+	const token = Cookies.get("access_token")!;
+	const payload = jwtDecode<{id:string}>(token!)	
+
+
+	const {data} = await JobServiceInstance.get("/recent-jobs", {
+		headers: {Authorization: payload.id},
+	});
 	return data;
 };
 
@@ -63,11 +70,14 @@ export const applyForJob = async (ids: {
 	company_id: string;
 	job_id: string;
 	user_id: string;
+	user_name:string;
+	user_profile:string | null
 }) => {
-	const {company_id, job_id, user_id} = ids;
+	const {company_id, job_id, user_id,user_name,user_profile} = ids;
+	console.log(ids.user_name);
 	const {data} = await JobServiceInstance.post(
 		"/apply",
-		{company_id, job_id, user_id},
+		{company_id, job_id, user_id,user_name,user_profile},
 		{
 			headers: {
 				"Content-Type": "application/json",
@@ -102,6 +112,20 @@ export const updateApplicationStatus = async ({
 	user_id: string;
 	new_status: "viewed" | "applied" | "rejected" | "hired" | "interviewing";
 }) => {
-	const {data} = await JobServiceInstance.post("/update-application-status",{job_id,user_id,new_status});
+	const {data} = await JobServiceInstance.post("/update-application-status", {
+		job_id,
+		user_id,
+		new_status,
+	});
 	return data;
 };
+
+export const recruitmentProgress = async(id:string) =>{
+	const {data} = await JobServiceInstance.get("/progress/"+id)
+	return data.progress
+}
+
+export const recentApplications = async(id:string)=>{
+	const {data} = await JobServiceInstance.get(`/recent-applications/${id}`)
+	return data
+}

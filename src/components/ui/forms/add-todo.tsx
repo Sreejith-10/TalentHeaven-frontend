@@ -26,9 +26,14 @@ import {Input} from "../input";
 
 const schema = z.object({
 	todo: z.string(),
+	deadLine: z.string(),
 });
 
-const AddTodo = () => {
+interface AddTodoProps {
+	addTodo: (val: {todo: string; deadLine: string}) => void;
+}
+
+const AddTodo = ({addTodo}: AddTodoProps) => {
 	const {toast} = useToast();
 
 	const dialogRef = useRef<HTMLButtonElement>(null);
@@ -37,11 +42,12 @@ const AddTodo = () => {
 		resolver: zodResolver<typeof schema>(schema),
 		defaultValues: {
 			todo: "",
+			deadLine: "",
 		},
 	});
 
 	const submitHandler = (values: z.infer<typeof schema>) => {
-		console.log(values);
+		addTodo({todo: values.todo, deadLine: values.deadLine});
 	};
 
 	return (
@@ -68,6 +74,20 @@ const AddTodo = () => {
 									<FormLabel className="font-bold">Task</FormLabel>
 									<FormControl>
 										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="deadLine"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel className="font-bold">Deadline</FormLabel>
+									<FormControl>
+										<Input {...field} type="datetime-local" />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

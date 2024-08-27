@@ -47,7 +47,7 @@ const Header = () => {
 	};
 
 	return (
-		<div className="w-full flex items-center justify-between">
+		<div className="w-full h-full flex items-center justify-between">
 			<div>
 				<h1 className="font-semibold text-2xl">Dashboard</h1>
 			</div>

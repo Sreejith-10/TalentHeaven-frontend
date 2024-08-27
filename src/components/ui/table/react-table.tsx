@@ -31,14 +31,15 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import {JobType} from "@/lib/types";
 
 export function ReactTable({
 	data,
 	columns,
+	page = 10,
 }: {
-	data: JobType[];
-	columns: ColumnDef<JobType>[];
+	data: any[];
+	columns: ColumnDef<any>[];
+	page: number;
 }) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -49,7 +50,7 @@ export function ReactTable({
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0,
-		pageSize: 10,
+		pageSize: page,
 	});
 
 	const table = useReactTable({
@@ -75,41 +76,43 @@ export function ReactTable({
 
 	return (
 		<div className="w-full">
-			<div className="flex items-center py-4">
-				<Input
-					placeholder="Filter jobs..."
-					value={(table.getColumn("role")?.getFilterValue() as string) ?? ""}
-					onChange={(event) =>
-						table.getColumn("role")?.setFilterValue(event.target.value)
-					}
-					className="max-w-sm"
-				/>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							Columns <ChevronDown className="ml-2 h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-								return (
-									<DropdownMenuCheckboxItem
-										key={column.id}
-										className="capitalize"
-										checked={column.getIsVisible()}
-										onCheckedChange={(value) =>
-											column.toggleVisibility(!!value)
-										}>
-										{column.id}
-									</DropdownMenuCheckboxItem>
-								);
-							})}
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
+			{(table.getColumn("role")?.getFilterValue() as string) && (
+				<div className="flex items-center py-4">
+					<Input
+						placeholder="Filter jobs..."
+						value={(table.getColumn("role")?.getFilterValue() as string) ?? ""}
+						onChange={(event) =>
+							table.getColumn("role")?.setFilterValue(event.target.value)
+						}
+						className="max-w-sm"
+					/>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="outline" className="ml-auto">
+								Columns <ChevronDown className="ml-2 h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							{table
+								.getAllColumns()
+								.filter((column) => column.getCanHide())
+								.map((column) => {
+									return (
+										<DropdownMenuCheckboxItem
+											key={column.id}
+											className="capitalize"
+											checked={column.getIsVisible()}
+											onCheckedChange={(value) =>
+												column.toggleVisibility(!!value)
+											}>
+											{column.id}
+										</DropdownMenuCheckboxItem>
+									);
+								})}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			)}
 			<div className="rounded-md border">
 				<Table>
 					<TableHeader>

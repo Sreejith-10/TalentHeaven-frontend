@@ -28,6 +28,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import Tile from "@/components/ui/tile";
 
 export default function Search() {
 	const url = new URL(window.location.href);
@@ -91,8 +92,66 @@ export default function Search() {
 							Find Your Dream Jobs
 						</h1>
 						<SerachBar />
+						{/* <div className="w-full h-auto px-28 flex flex-wrap gap-6">
+							{search.getAll("filter_job_type").map((item, index) => (
+								<Tile
+									onclick={() => {
+										search.delete("filter_job_type", item);
+										window.history.pushState(
+											{},
+											"",
+											`${url.origin}${url.pathname}?${search.toString()}`
+										);
+									}}
+									key={index}>
+									{item}
+								</Tile>
+							))}
+							{search.getAll("filter_job_mode").map((item, index) => (
+								<Tile
+									onclick={() => {
+										search.delete("filter_job_mode", item);
+										window.history.pushState(
+											{},
+											"",
+											`${url.origin}${url.pathname}?${search.toString()}`
+										);
+									}}
+									key={index}>
+									{item}
+								</Tile>
+							))}
+							{search.getAll("filter_experience").map((item, index) => (
+								<Tile
+									onclick={() => {
+										search.delete("filter_experience", item);
+										window.history.pushState(
+											{},
+											"",
+											`${url.origin}${url.pathname}?${search.toString()}`
+										);
+									}}
+									key={index}>
+									{item}
+								</Tile>
+							))}
+							{search.getAll("filter_salary").map((item, index) => (
+								<Tile
+									onclick={() => {
+										search.delete("filter_salary", item);
+										window.history.pushState(
+											{},
+											"",
+											`${url.origin}${url.pathname}?${search.toString()}`
+										);
+									}}
+									key={index}>
+									{item}
+								</Tile>
+							))}
+						</div> */}
 					</section>
-					<div className="w-full h-auto flex gap-5 py-[90px] px-[200px] sm:py-[30px]">
+					<div className="w-full h-auto flex gap-5 py-[90px] px-[200px] sm:py-[30px] sm:px-[30px]">
 						<div className="w-[30%] lg:w-[25%] p-5 space-y-4 sm:hidden">
 							<div>
 								<h2 className="font-semibold up">Filter</h2>
@@ -298,7 +357,7 @@ export default function Search() {
 							</div>
 							<br />
 						</div>
-						<div className="w-[70%] xs:w-full lg:w-[75%] h-full p-5 space-y-5 flex flex-col">
+						<div className="w-[70%] xs:w-full lg:w-[75%] h-full space-y-5 flex flex-col">
 							<div className="w-full flex justify-between">
 								<h2 className="font-semibold">
 									{isLoading
@@ -324,6 +383,36 @@ export default function Search() {
 								className="hidden sm:block bg-purple-600 hover:bg-purple-500">
 								Filter
 							</Button>
+							<div className="hidden sm:flex flex-wrap gap-2">
+								{search.getAll("filter_job_type").map((item, index) => (
+									<span
+										className="bg-slate-200 px-2 py-1 rounded-md border border-slate-400 border-opacity-30 text-sm font-semibold"
+										key={index}>
+										{item}
+									</span>
+								))}
+								{search.getAll("filter_job_mode").map((item, index) => (
+									<span
+										className="bg-slate-200 px-2 py-1 rounded-md border border-slate-400 border-opacity-30 text-sm font-semibold"
+										key={index}>
+										{item}
+									</span>
+								))}
+								{search.getAll("filter_experience").map((item, index) => (
+									<span
+										className="bg-slate-200 px-2 py-1 rounded-md border border-slate-400 border-opacity-30 text-sm font-semibold"
+										key={index}>
+										{item}
+									</span>
+								))}
+								{search.getAll("filter_salary").map((item, index) => (
+									<span
+										className="bg-slate-200 px-2 py-1 rounded-md border border-slate-400 border-opacity-30 text-sm font-semibold"
+										key={index}>
+										{item}
+									</span>
+								))}
+							</div>
 							<div className="w-full space-y-5">
 								{isLoading ? (
 									<div>loading . . .</div>
@@ -393,50 +482,188 @@ export default function Search() {
 					},
 				}}
 				animate={showFilter ? "slide" : "initial"}
-				className="hidden sm:block fixed w-[300px] z-[99] h-dvh top-0 left-0 bg-slate-100 overflow-scroll px-10 py-5">
+				className="hidden sm:block fixed w-[300px] z-[99] h-dvh top-0 left-0 bg-slate-100 px-10 py-5 overflow-auto hide-scroll-bar">
 				<X
 					className="absolute top-4 right-4"
 					onClick={() => setShowFilter(false)}
 				/>
 
-				<div className="space-y-3">
-					<h2 className="text-slate-600 font-semibold uppercase text-sm">
-						Job Type
-					</h2>
-					<ul className="space-y-2">
-						{job_type.map((item) => (
-							<li key={item} className="flex gap-3 items-center">
-								<Checkbox />
-								<p className="text-slate-600">{item}</p>
-							</li>
-						))}
-					</ul>
+				<div className="my-10">
+					<h1 className="text-2xl font-semibold">Filters</h1>
 				</div>
-				<br />
-				<div className="space-y-3">
-					<h2 className="text-slate-600 font-semibold uppercase text-sm">
-						Experience level
-					</h2>
-					<ul className="space-y-2">
-						{experience_level.map((item) => (
-							<li key={item} className="flex gap-3 items-center">
-								<Checkbox />
-								<p className="text-slate-600">{item}</p>
-							</li>
-						))}
-					</ul>
-				</div>
-				<br />
-				<div className="space-y-3">
-					<h2 className="text-slate-600 font-semibold uppercase text-sm">
-						salary<span className="text-slate-500 pl-2">(in LPA)</span>
-					</h2>
-					<div className="flex gap-5">
-						<Input className="w-[100px]" placeholder="MIN" />
-						<Input className="w-[100px]" placeholder="MAX" />
+
+				<div className="">
+					<div className="space-y-3">
+						<h2 className="text-slate-600 font-semibold uppercase text-sm">
+							Job Type
+						</h2>
+						<ul className="space-y-2">
+							{job_type.map((item) => (
+								<li key={item} className="flex gap-3 items-center">
+									<Checkbox
+										checked={search.getAll("filter_job_type").includes(item)}
+										onCheckedChange={(state) => {
+											if (state) {
+												search.append("filter_job_type", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													job_type: [...prev.job_type, item],
+												}));
+											} else {
+												search.delete("filter_job_type", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													job_type: prev.job_type.filter((val) => val !== item),
+												}));
+											}
+										}}
+									/>
+									<p className="text-slate-600">
+										{item.charAt(0).toUpperCase().concat(item.slice(1))}
+									</p>
+								</li>
+							))}
+						</ul>
+					</div>
+					<br />
+					<div className="space-y-3">
+						<h2 className="text-slate-600 font-semibold uppercase text-sm">
+							Job Mode
+						</h2>
+						<ul className="space-y-2">
+							{job_mode.map((item) => (
+								<li key={item} className="flex gap-3 items-center">
+									<Checkbox
+										checked={search.getAll("filter_job_mode").includes(item)}
+										onCheckedChange={(state) => {
+											if (state) {
+												search.append("filter_job_mode", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													job_mode: [...prev.job_mode, item],
+												}));
+											} else {
+												search.delete("filter_job_mode", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													job_mode: prev.job_mode.filter((val) => val !== item),
+												}));
+											}
+										}}
+									/>
+									<p className="text-slate-600">
+										{" "}
+										{item.charAt(0).toUpperCase().concat(item.slice(1))}
+									</p>
+								</li>
+							))}
+						</ul>
+					</div>
+					<br />
+					<div className="space-y-3">
+						<h2 className="text-slate-600 font-semibold uppercase text-sm">
+							Experience level
+						</h2>
+						<ul className="space-y-2">
+							{experience_level.map((item) => (
+								<li key={item} className="flex gap-3 items-center">
+									<Checkbox
+										checked={search.getAll("filter_experience")?.includes(item)}
+										onCheckedChange={(state) => {
+											if (state) {
+												search.append("filter_experience", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													experience_level: [...prev.experience_level, item],
+												}));
+											} else {
+												search.delete("filter_experience", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													experience_level: prev.experience_level.filter(
+														(val) => val !== item
+													),
+												}));
+											}
+										}}
+									/>
+									<p className="text-slate-600">{item}</p>
+								</li>
+							))}
+						</ul>
+					</div>
+					<br />
+					<div className="space-y-3">
+						<h2 className="text-slate-600 font-semibold uppercase text-sm">
+							Salary
+						</h2>
+						<ul className="space-y-2">
+							{salary.map((item) => (
+								<li key={item} className="flex gap-3 items-center">
+									<Checkbox
+										checked={search.getAll("filter_salary")?.includes(item)}
+										onCheckedChange={(state) => {
+											if (state) {
+												search.append("filter_salary", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													salary: [...prev.salary, item],
+												}));
+											} else {
+												search.delete("filter_salary", item);
+												window.history.pushState(
+													{},
+													"",
+													`${url.origin}${url.pathname}?${search.toString()}`
+												);
+												setFilters((prev) => ({
+													...prev,
+													salary: prev.salary.filter((val) => val !== item),
+												}));
+											}
+										}}
+									/>
+									<p className="text-slate-600">{item}</p>
+								</li>
+							))}
+						</ul>
 					</div>
 				</div>
-				<br />
 			</motion.div>
 		</main>
 	);

@@ -1,6 +1,6 @@
 "use client";
 
-import {Fragment, ReactNode, useLayoutEffect, useState} from "react";
+import {Fragment, ReactNode, useEffect, useState} from "react";
 import Cookie from "js-cookie";
 import {useRecruiterStore} from "@/store/useRecruiterStore";
 import {jwtDecode} from "jwt-decode";
@@ -19,8 +19,14 @@ export const ProtectedRoute = ({children}: {children: ReactNode}) => {
 
 	const {mutate} = useMutation({
 		mutationFn: refresh,
-		onSuccess: ({data}) => {
-			console.log(data);
+		onSuccess: (data) => {
+			const access_token = Cookie.get("hr_access_token");
+			const decode = jwtDecode<{id: string; cmp_id: string}>(
+				access_token as string
+			);
+			setCompanyId(decode.cmp_id);
+			setId(decode.id);
+			setAuth(true);
 		},
 		onError: (err) => {
 			const error = err as AxiosError;
@@ -28,37 +34,36 @@ export const ProtectedRoute = ({children}: {children: ReactNode}) => {
 		},
 	});
 
-	useLayoutEffect(() => {
-		if (auth) {
-			setLoad(false);
-		}
+	useEffect(() => {
+		const authentication = () => {
+			try {
+				setLoad(true);
+				const access_token = Cookie.get("hr_access_token");
+				const session_id = Cookie.get("hr_session_id");
 
-		const access = Cookie.get("access_token");
-
-		if (access) {
-			const payload = jwtDecode(access);
-			//@ts-expect-error typo
-			setCompanyId(payload.cmp_id);
-			//@ts-expect-error typo
-			setId(payload.id);
-
-			//@ts-expect-error typo
-			if (payload.admin) {
-				setAuth(true);
+				if (!access_token && !session_id) {
+					push("/recruiter-login");
+				} else if (!access_token) {
+					mutate(session_id as string);
+				} else {
+					const decode = jwtDecode<{id: string; cmp_id: string}>(access_token);
+					setCompanyId(decode.cmp_id);
+					setId(decode.id);
+					setAuth(true);
+				}
+			} catch (error) {
+				console.log(error);
+			} finally {
 				setLoad(false);
 			}
-		} else {
-			const id = JSON.parse(localStorage.getItem("session_id")!);
+		};
 
-			if (!id) return push("/recruiter-login");
-
-			console.log(id);
-
-			mutate(id);
-		}
+		authentication();
 	}, []);
 
-	if (load) return <div>loading...</div>;
+	if (load) {
+		return <div>loading...</div>;
+	}
 
 	return <Fragment>{children}</Fragment>;
 };
