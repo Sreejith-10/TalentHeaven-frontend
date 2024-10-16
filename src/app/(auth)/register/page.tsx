@@ -121,7 +121,7 @@ export default function Register() {
 								<FormControl>
 									<div className="w-full h-auto relative">
 										<Input
-											autoComplete="password"
+											autoComplete="new-password"
 											{...field}
 											type={show ? "text" : "password"}
 										/>

@@ -16,13 +16,13 @@ export default function RegisterSection() {
 						</h1>
 						<p className="text-slate-500 dark:text-slate-700">How it works</p>
 					</div>
-					<div className="flex gap-10 md:grid md:gap-16">
+					<div className="flex gap-10 md:grid md:gap-16 lg:gap-3 md:space-y-10">
 						<motion.div
 							initial={{opacity: 0}}
 							whileInView={{opacity: 1}}
 							transition={{ease: "easeInOut", delay: 0.5}}
 							viewport={{once: true}}
-							className="w-[300px] h-[350px] md:w-[400px] md:h-[450px] xs:w-[350px] bg-cyan-200 px-5 flex flex-col rounded-[32px] shadow-md">
+							className="w-[300px] h-[350px] md:w-[350px] md:h-[380px] xs:w-[350px] bg-cyan-200 px-5 flex flex-col rounded-[32px] shadow-md">
 							<div className="py-5 space-y-2">
 								<h1 className="font-semibold text-xl dark:text-slate-600">
 									Sign Up for TalentHeaven
@@ -55,7 +55,7 @@ export default function RegisterSection() {
 							whileInView={{opacity: 1}}
 							transition={{ease: "easeInOut", delay: 0.9}}
 							viewport={{once: true}}
-							className="w-[300px] h-[350px] md:w-[400px] md:h-[450px] xs:w-[350px] bg-pink-200 px-5 flex flex-col rounded-[32px] shadow-md">
+							className="w-[300px] h-[350px] md:w-[350px] md:h-[380px] xs:w-[350px] bg-pink-200 px-5 flex flex-col rounded-[32px] shadow-md">
 							<div className="py-5 space-y-2">
 								<h1 className="font-semibold text-xl dark:text-slate-700">
 									Find a job to liking
@@ -120,7 +120,7 @@ export default function RegisterSection() {
 							whileInView={{opacity: 1}}
 							transition={{ease: "easeInOut", delay: 1.3}}
 							viewport={{once: true}}
-							className="w-[300px] h-[350px] md:w-[400px] md:h-[450px] xs:w-[350px] bg-rose-200 px-5 flex flex-col rounded-[32px] shadow-md">
+							className="w-[300px] h-[350px] md:w-[350px] md:h-[380px] xs:w-[350px] bg-rose-200 px-5 flex flex-col rounded-[32px] shadow-md">
 							<div className="py-5 space-y-2">
 								<h1 className="font-semibold text-xl dark:text-slate-700">
 									Apply to job your choice

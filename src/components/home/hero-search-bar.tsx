@@ -29,7 +29,7 @@ const HeroSeachBar = () => {
 					placeholder="Job title or keyword"
 				/>
 			</div>
-			<span className="inline-block w-[2px] h-[30px] bg-slate-300 sm:hidden" />
+			<span className="inline-block w-[2px] h-[30px] bg-slate-300 md:hidden" />
 			<div className="flex gap-5 sm:hidden">
 				<MapPinnedIcon />
 				<input
